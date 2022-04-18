@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
 
 @Data
@@ -16,17 +19,25 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "client_data", schema = "public")
 public class ClientData {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "user_id")
-    private Integer userId;
-    @Column(name = "driver_licence_no")
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column(unique = true)
     private String driverLicenceNo;
-    @Column(name = "dl_expiration_day")
+
     private LocalDate dlExpirationDay;
-    @Column(name = "credit_amount")
+
     private Double creditAmount;
+
+    public void setUser(User user) {
+        user.setClientData(this);
+        this.user = user;
+    }
 }
