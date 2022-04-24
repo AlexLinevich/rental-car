@@ -47,6 +47,10 @@ public class User {
     private ClientData clientData;
 
     @Builder.Default
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders = new ArrayList<>();
+
+    public String fullName() {
+        return firstName + " " + lastName;
+    }
 }

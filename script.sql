@@ -1,4 +1,4 @@
-CREATE DATABASE rental-car;
+CREATE DATABASE new_rental_car;
 
 CREATE TABLE users
 (
@@ -30,16 +30,17 @@ CREATE TABLE car
 (
     id              SERIAL PRIMARY KEY,
     model           VARCHAR(32)                      NOT NULL,
-    car_category_id INT REFERENCES car_category (id) NOT NULL,
+    car_category_id INT REFERENCES car_category (id) NOT NULL UNIQUE,
     colour          VARCHAR(32)                      NOT NULL,
-    seats_quantity  INT                              NOT NULL
+    seats_quantity  INT                              NOT NULL,
+    image           VARCHAR(128)                     NOT NULL
 );
 
 CREATE TABLE orders
 (
     id         SERIAL PRIMARY KEY,
-    user_id    INT REFERENCES users (id) NOT NULL,
-    car_id     INT REFERENCES car (id)   NOT NULL,
+    user_id    INT REFERENCES users (id) NOT NULL UNIQUE ,
+    car_id     INT REFERENCES car (id)   NOT NULL UNIQUE ,
     begin_time TIMESTAMP                 NOT NULL,
     end_time   TIMESTAMP                 NOT NULL,
     status     VARCHAR(32)               NOT NULL,

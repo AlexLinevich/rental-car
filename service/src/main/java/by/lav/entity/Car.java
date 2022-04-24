@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,13 +29,15 @@ public class Car {
 
     private String model;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "car_category_id")
     private CarCategory carCategory;
 
     private String colour;
 
     private Integer seatsQuantity;
+
+    private String image;
 
     @Builder.Default
     @OneToMany(mappedBy = "car")
