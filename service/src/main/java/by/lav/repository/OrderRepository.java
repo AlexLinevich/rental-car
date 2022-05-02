@@ -1,24 +1,20 @@
-package by.lav.dao;
+package by.lav.repository;
 
 import by.lav.entity.Order;
 import by.lav.entity.OrderStatus;
 import com.querydsl.jpa.impl.JPAQuery;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.hibernate.Session;
+
+import javax.persistence.EntityManager;
 
 import java.util.List;
 
 import static by.lav.entity.QOrder.order;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class OrderDao {
+public class OrderRepository extends RepositoryBase<Integer, Order> {
 
-    private static final OrderDao INSTANCE = new OrderDao();
-
-    public List<Order> findAll(Session session) {
-        return session.createQuery("select o from Order o", Order.class)
-                .list();
+    public OrderRepository(EntityManager entityManager) {
+        super(Order.class, entityManager);
     }
 
     public List<Order> findByStatus(Session session, OrderStatus orderStatus) {
@@ -27,9 +23,5 @@ public class OrderDao {
                 .from(order)
                 .where(order.status.eq(orderStatus))
                 .fetch();
-    }
-
-    public static OrderDao getInstance() {
-        return INSTANCE;
     }
 }

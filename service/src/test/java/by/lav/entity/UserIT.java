@@ -6,8 +6,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class UserIT {
 
@@ -39,7 +40,7 @@ class UserIT {
             assertNotNull(user.getId());
 
             session.delete(user);
-            session.getTransaction().commit();
+            session.getTransaction().rollback();
         }
     }
 
@@ -62,7 +63,7 @@ class UserIT {
             assertThat(firstName).isEqualTo("Alex");
 
             session.delete(user);
-            session.getTransaction().commit();
+            session.getTransaction().rollback();
         }
     }
 
@@ -89,7 +90,7 @@ class UserIT {
             assertThat(user2.getFirstName()).isEqualTo("Ivan");
 
             session.delete(user);
-            session.getTransaction().commit();
+            session.getTransaction().rollback();
         }
     }
 
@@ -111,9 +112,9 @@ class UserIT {
             session.flush();
 
             User user1 = session.get(User.class, user.getId());
-            assertThat(user1 == null);
+            assertNull(user1);
 
-            session.getTransaction().commit();
+            session.getTransaction().rollback();
         }
     }
 }

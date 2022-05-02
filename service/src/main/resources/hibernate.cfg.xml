@@ -11,6 +11,7 @@
         <property name="dialect">org.hibernate.dialect.PostgreSQL10Dialect</property>
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
+        <property name="hibernate.current_session_context_class">thread</property>
 
         <mapping class="by.lav.entity.User"/>
         <mapping class="by.lav.entity.Car"/>

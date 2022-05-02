@@ -1,26 +1,22 @@
-package by.lav.dao;
+package by.lav.repository;
 
+import by.lav.dao.QPredicate;
 import by.lav.dto.CarFilter;
 import by.lav.entity.Car;
 import com.querydsl.jpa.impl.JPAQuery;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.graph.GraphSemantic;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
 import static by.lav.entity.QCar.car;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CarDao {
+public class CarRepository extends RepositoryBase<Integer, Car> {
 
-    private static final CarDao INSTANCE = new CarDao();
-
-    public List<Car> findAll(Session session) {
-        return session.createQuery("select c from Car c", Car.class)
-                .list();
+    public CarRepository(EntityManager entityManager) {
+        super(Car.class, entityManager);
     }
 
     public List<Car> findAllByCarCategory(Session session, String carCategory) {
@@ -55,9 +51,5 @@ public class CarDao {
                 .from(car)
                 .where(predicate)
                 .fetch();
-    }
-
-    public static CarDao getInstance() {
-        return INSTANCE;
     }
 }

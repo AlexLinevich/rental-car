@@ -1,6 +1,6 @@
 package by.lav.dao;
 
-import by.lav.by.lav.dto.UserFilter;
+import by.lav.dto.UserFilter;
 import by.lav.entity.User;
 import by.lav.util.HibernateUtil;
 import by.lav.util.TestDataImporter;
@@ -10,28 +10,25 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
-@TestInstance(PER_CLASS)
 class UserDaoIT {
 
-    private final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+    private static final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
     private final UserDao userDao = UserDao.getInstance();
 
     @BeforeAll
-    public void initDb() {
+    static void initDb() {
         TestDataImporter.importData(sessionFactory);
     }
 
     @AfterAll
-    public void finish() {
+    static void finish() {
         sessionFactory.close();
     }
 
@@ -46,7 +43,7 @@ class UserDaoIT {
         List<String> fullNames = results.stream().map(User::fullName).collect(toList());
         assertThat(fullNames).containsExactlyInAnyOrder("Bob Robson", "Ivan Ivanov", "Alex Semenov");
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 
     @Test
@@ -60,7 +57,7 @@ class UserDaoIT {
         user.ifPresent(value -> assertThat(value).isNotNull());
         user.ifPresent(value -> assertThat(value.fullName()).isEqualTo("Bob Robson"));
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 
     @Test
@@ -74,7 +71,7 @@ class UserDaoIT {
         user.ifPresent(value -> assertThat(value).isNotNull());
         user.ifPresent(value -> assertThat(value.fullName()).isEqualTo("Bob Robson"));
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 
     @Test
@@ -82,15 +79,20 @@ class UserDaoIT {
         @Cleanup Session session = sessionFactory.openSession();
         session.beginTransaction();
 
+        UserFilter filter = UserFilter.builder()
+                .firstName("Bob")
+                .lastName("Robson")
+                .build();
+
         List<User> users = userDao.findByFirstNameAndLastNameWithCriteriaAPI(
-                session, null, "Robson");
+                session, filter);
 
         assertThat(users).hasSize(1);
 
         List<String> fullNames = users.stream().map(User::fullName).collect(toList());
         assertThat(fullNames).containsExactlyInAnyOrder("Bob Robson");
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 
     @Test
@@ -110,6 +112,6 @@ class UserDaoIT {
         List<String> fullNames = users.stream().map(User::fullName).collect(toList());
         assertThat(fullNames).containsExactlyInAnyOrder("Bob Robson");
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 }

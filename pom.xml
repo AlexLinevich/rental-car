@@ -20,6 +20,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>14</maven.compiler.source>
         <maven.compiler.target>14</maven.compiler.target>
+
+        <lombok.version>1.18.22</lombok.version>
+        <junit5.version>5.8.2</junit5.version>
+        <querydsl.version>5.0.0</querydsl.version>
+        <hibernate.version>5.6.7.Final</hibernate.version>
+        <javax.persistence-api>2.2</javax.persistence-api>
     </properties>
 
     <dependencyManagement>
@@ -27,13 +33,13 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.6.7.Final</version>
+                <version>${hibernate.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-jpamodelgen</artifactId>
-                <version>5.6.7.Final</version>
+                <version>${hibernate.version}</version>
             </dependency>
 
             <dependency>
@@ -45,14 +51,14 @@
             <dependency>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-apt</artifactId>
-                <version>5.0.0</version>
+                <version>${querydsl.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-jpa</artifactId>
-                <version>5.0.0</version>
+                <version>${querydsl.version}</version>
             </dependency>
 
             <dependency>
@@ -71,14 +77,14 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.22</version>
+                <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.8.2</version>
+                <version>${junit5.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -144,7 +150,7 @@
             <plugin>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-maven-plugin</artifactId>
-                <version>5.0.0</version>
+                <version>${querydsl.version}</version>
                 <executions>
                     <execution>
                         <phase>process-classes</phase>
@@ -165,7 +171,7 @@
                     <dependency>
                         <groupId>javax.persistence</groupId>
                         <artifactId>javax.persistence-api</artifactId>
-                        <version>2.2</version>
+                        <version>${javax.persistence-api}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -176,7 +182,8 @@
                 <version>3.10.1</version>
                 <configuration>
                     <annotationProcessors>
-                        <annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor</annotationProcessor>
+                        <annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor
+                        </annotationProcessor>
                         <annotationProcessor>com.querydsl.apt.jpa.JPAAnnotationProcessor</annotationProcessor>
                         <annotationProcessor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</annotationProcessor>
                     </annotationProcessors>
@@ -184,22 +191,22 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.22</version>
+                            <version>${lombok.version}</version>
                         </path>
                         <path>
                             <groupId>com.querydsl</groupId>
                             <artifactId>querydsl-apt</artifactId>
-                            <version>5.0.0</version>
+                            <version>${querydsl.version}</version>
                         </path>
                         <path>
                             <groupId>javax.persistence</groupId>
                             <artifactId>javax.persistence-api</artifactId>
-                            <version>2.2</version>
+                            <version>${javax.persistence-api}</version>
                         </path>
                         <path>
                             <groupId>org.hibernate</groupId>
                             <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>5.6.7.Final</version>
+                            <version>${hibernate.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
@@ -219,22 +226,6 @@
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
-
-<!--                <plugin>-->
-<!--                    <groupId>org.apache.maven.plugins</groupId>-->
-<!--                    <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                    <version>3.8.1</version>-->
-<!--                    <configuration>-->
-<!--                        <annotationProcessorPaths>-->
-<!--                            <path>-->
-<!--                                <groupId>org.projectlombok</groupId>-->
-<!--                                <artifactId>lombok</artifactId>-->
-<!--                                <version>1.18.22</version>-->
-<!--                            </path>-->
-<!--                        </annotationProcessorPaths>-->
-<!--                    </configuration>-->
-
-<!--                </plugin>-->
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

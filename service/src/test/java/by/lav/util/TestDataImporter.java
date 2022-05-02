@@ -21,6 +21,7 @@ public class TestDataImporter {
 
     public void importData(SessionFactory sessionFactory) {
         @Cleanup Session session = sessionFactory.openSession();
+        session.beginTransaction();
 
         User robson = saveUser(session, "Bob", "Robson", "test1@tut.by", "test1", Role.ADMIN);
         User ivanov = saveUser(session, "Ivan", "Ivanov", "test2@tut.by", "test2", Role.CLIENT);
@@ -87,6 +88,8 @@ public class TestDataImporter {
                 mazda6,
                 LocalDateTime.of(2020, 3, 25, 12, 0),
                 LocalDateTime.of(2020, 3, 28, 12, 0));
+
+        session.getTransaction().commit();
     }
 
     private User saveUser(Session session,

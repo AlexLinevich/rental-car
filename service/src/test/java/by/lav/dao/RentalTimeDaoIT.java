@@ -9,28 +9,25 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
-@TestInstance(PER_CLASS)
 class RentalTimeDaoIT {
 
-    private final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+    private static final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
     private final RentalTimeDao rentalTimeDao = RentalTimeDao.getInstance();
 
     @BeforeAll
-    public void initDb() {
+    static void initDb() {
         TestDataImporter.importData(sessionFactory);
     }
 
     @AfterAll
-    public void finish() {
+    static void finish() {
         sessionFactory.close();
     }
 
@@ -49,6 +46,6 @@ class RentalTimeDaoIT {
         List<LocalDateTime> beginTimes = results.stream().map(RentalTime::getBeginTime).collect(toList());
         assertThat(beginTimes).containsExactlyInAnyOrder(beginTime1, beginTime2, beginTime3, beginTime4);
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 }

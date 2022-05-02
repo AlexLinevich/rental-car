@@ -1,6 +1,6 @@
 package by.lav.dao;
 
-import by.lav.by.lav.dto.CarFilter;
+import by.lav.dto.CarFilter;
 import by.lav.entity.Car;
 import by.lav.util.HibernateUtil;
 import by.lav.util.TestDataImporter;
@@ -10,28 +10,25 @@ import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
-@TestInstance(PER_CLASS)
 class CarDaoIT {
 
-    private final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+    private static final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
     private final CarDao carDao = CarDao.getInstance();
 
     @BeforeAll
-    public void initDb() {
+    static void initDb() {
         TestDataImporter.importData(sessionFactory);
     }
 
     @AfterAll
-    public void finish() {
+    static void finish() {
         sessionFactory.close();
     }
 
@@ -47,7 +44,7 @@ class CarDaoIT {
         assertThat(models).containsExactlyInAnyOrder(
                 "TOYOTA CAMRY", "MAZDA 6", "TOYOTA LANDCRUISER", "MAZDA CX-9", "TOYOTA RAV4", "MAZDA CX-5");
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 
     @Test
@@ -58,7 +55,7 @@ class CarDaoIT {
         List<Car> results = carDao.findAllByCarCategory(session, "LARGE SUV");
         assertThat(results).hasSize(2);
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 
     @Test
@@ -71,7 +68,7 @@ class CarDaoIT {
         carDayPrice.ifPresent(value -> assertThat(value).isNotNull());
         carDayPrice.ifPresent(value -> assertThat(value).isEqualTo(60.0));
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 
     @Test
@@ -91,6 +88,6 @@ class CarDaoIT {
         List<String> modelNames = cars.stream().map(Car::getModel).collect(toList());
         assertThat(modelNames).containsExactlyInAnyOrder("TOYOTA LANDCRUISER", "MAZDA CX-9");
 
-        session.getTransaction().commit();
+        session.getTransaction().rollback();
     }
 }

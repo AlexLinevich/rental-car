@@ -1,27 +1,24 @@
-package by.lav.dao;
+package by.lav.repository;
 
+import by.lav.dao.CPredicate;
+import by.lav.dao.QPredicate;
 import by.lav.dto.UserFilter;
 import by.lav.entity.User;
 import by.lav.entity.User_;
 import com.querydsl.jpa.impl.JPAQuery;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.hibernate.Session;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.Optional;
 
 import static by.lav.entity.QUser.user;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserDao {
+public class UserRepository extends RepositoryBase<Integer, User> {
 
-    private static final UserDao INSTANCE = new UserDao();
-
-    public List<User> findAll(Session session) {
-        return session.createQuery("select u from User u", User.class)
-                .list();
+    public UserRepository(EntityManager entityManager) {
+        super(User.class, entityManager);
     }
 
     public Optional<User> findByEmailAndPasswordWithCriteriaAPI(Session session, String email, String password) {
@@ -75,9 +72,5 @@ public class UserDao {
                 .from(user)
                 .where(predicate)
                 .fetch();
-    }
-
-    public static UserDao getInstance() {
-        return INSTANCE;
     }
 }

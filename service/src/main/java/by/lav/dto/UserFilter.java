@@ -1,4 +1,4 @@
-package by.lav.by.lav.dto;
+package by.lav.dto;
 
 import lombok.Builder;
 import lombok.Value;
