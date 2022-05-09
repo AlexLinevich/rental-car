@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class RentalTimeRepositoryIT {
 
     private static final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+    private static final int ID_FIRST = 1;
 
     @BeforeAll
     static void initDb() {
@@ -61,9 +62,9 @@ public class RentalTimeRepositoryIT {
         session.beginTransaction();
 
         var rentalTimeRepository = new RentalTimeRepository(session);
-        rentalTimeRepository.delete(1);
+        rentalTimeRepository.delete(ID_FIRST);
 
-        RentalTime rentalTime = session.get(RentalTime.class, 1);
+        RentalTime rentalTime = session.get(RentalTime.class, ID_FIRST);
         assertNull(rentalTime);
 
         session.getTransaction().rollback();
@@ -78,12 +79,12 @@ public class RentalTimeRepositoryIT {
 
         var rentalTimeRepository = new RentalTimeRepository(session);
 
-        RentalTime rentalTime = session.get(RentalTime.class, 1);
+        RentalTime rentalTime = session.get(RentalTime.class, ID_FIRST);
         rentalTime.setBeginTime(LocalDateTime.of(2025, 1, 25, 12, 0));
         rentalTimeRepository.update(rentalTime);
 
         session.flush();
-        RentalTime rentalTime1 = session.get(RentalTime.class, 1);
+        RentalTime rentalTime1 = session.get(RentalTime.class, ID_FIRST);
         assertThat(rentalTime1.getBeginTime())
                 .isEqualTo(LocalDateTime.of(2025, 1, 25, 12, 0));
 
@@ -102,7 +103,7 @@ public class RentalTimeRepositoryIT {
         var beginTime = LocalDateTime.of(2020, 1, 25, 12, 0);
         var endTime = LocalDateTime.of(2020, 1, 29, 18, 0);
 
-        Optional<RentalTime> rentalTime = rentalTimeRepository.findById(1);
+        Optional<RentalTime> rentalTime = rentalTimeRepository.findById(ID_FIRST);
         rentalTime.ifPresent(System.out::println);
 
         assertThat(rentalTime).isNotNull();

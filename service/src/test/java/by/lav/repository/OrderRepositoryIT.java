@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class OrderRepositoryIT {
 
     private static final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+    private static final int ID_FIRST = 1;
 
     @BeforeAll
     static void initDb() {
@@ -62,9 +63,9 @@ public class OrderRepositoryIT {
         session.beginTransaction();
 
         var orderRepository = new OrderRepository(session);
-        orderRepository.delete(1);
+        orderRepository.delete(ID_FIRST);
 
-        Order order = session.get(Order.class, 1);
+        Order order = session.get(Order.class, ID_FIRST);
         assertNull(order);
 
         session.getTransaction().rollback();
@@ -80,12 +81,12 @@ public class OrderRepositoryIT {
         var orderRepository = new OrderRepository(session);
 
         var beginTime = LocalDateTime.of(2025, 1, 25, 12, 0);
-        Order order = session.get(Order.class, 1);
+        Order order = session.get(Order.class, ID_FIRST);
         order.setBeginTime(beginTime);
         orderRepository.update(order);
 
         session.flush();
-        Order order1 = session.get(Order.class, 1);
+        Order order1 = session.get(Order.class, ID_FIRST);
         assertThat(order1.getBeginTime()).isEqualTo(beginTime);
 
         session.getTransaction().rollback();
@@ -100,7 +101,7 @@ public class OrderRepositoryIT {
 
         var orderRepository = new OrderRepository(session);
 
-        Optional<Order> order = orderRepository.findById(1);
+        Optional<Order> order = orderRepository.findById(ID_FIRST);
 
         var beginTime = LocalDateTime.of(2020, 1, 25, 12, 0);
         var endTime = LocalDateTime.of(2020, 1, 29, 18, 0);
@@ -143,7 +144,7 @@ public class OrderRepositoryIT {
 
         var orderRepository = new OrderRepository(session);
 
-        List<Order> results = orderRepository.findByStatus(session, OrderStatus.ACCEPTED);
+        List<Order> results = orderRepository.findByStatus(OrderStatus.ACCEPTED);
         assertThat(results).hasSize(3);
 
         session.getTransaction().rollback();

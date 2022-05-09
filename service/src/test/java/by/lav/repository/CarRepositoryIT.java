@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class CarRepositoryIT {
 
     private static final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+    private static final int ID_FIRST = 1;
 
     @BeforeAll
     static void initDb() {
@@ -64,7 +65,7 @@ public class CarRepositoryIT {
         var carRepository = new CarRepository(session);
         carRepository.delete(1);
 
-        Car car = session.get(Car.class, 1);
+        Car car = session.get(Car.class, ID_FIRST);
         assertNull(car);
 
         session.getTransaction().rollback();
@@ -79,12 +80,12 @@ public class CarRepositoryIT {
 
         var carRepository = new CarRepository(session);
 
-        Car car = session.get(Car.class, 1);
+        Car car = session.get(Car.class, ID_FIRST);
         car.setColour("BLUE");
         carRepository.update(car);
 
         session.flush();
-        Car car1 = session.get(Car.class, 1);
+        Car car1 = session.get(Car.class, ID_FIRST);
         assertThat(car1.getColour()).isEqualTo("BLUE");
 
         session.getTransaction().rollback();
@@ -99,7 +100,7 @@ public class CarRepositoryIT {
 
         var carRepository = new CarRepository(session);
 
-        Optional<Car> car = carRepository.findById(1);
+        Optional<Car> car = carRepository.findById(ID_FIRST);
 
         assertThat(car).isNotNull();
         car.ifPresent(value -> assertThat(value.getModel()).isEqualTo("TOYOTA CAMRY"));
@@ -136,7 +137,7 @@ public class CarRepositoryIT {
 
         var carRepository = new CarRepository(session);
 
-        List<Car> results = carRepository.findAllByCarCategory(session, "LARGE SUV");
+        List<Car> results = carRepository.findAllByCarCategory("LARGE SUV");
         assertThat(results).hasSize(2);
 
         session.getTransaction().rollback();
@@ -151,7 +152,7 @@ public class CarRepositoryIT {
 
         var carRepository = new CarRepository(session);
 
-        Optional<Double> carDayPrice = carRepository.findDayPriceByCarModel(session, "TOYOTA CAMRY");
+        Optional<Double> carDayPrice = carRepository.findDayPriceByCarModel("TOYOTA CAMRY");
 
         assertThat(carDayPrice).isNotNull();
         carDayPrice.ifPresent(value -> assertThat(value).isEqualTo(60.0));
@@ -172,8 +173,7 @@ public class CarRepositoryIT {
                 .colour("WHITE")
                 .seatsQuantity(7)
                 .build();
-        List<Car> cars = carRepository.findAllByColourAndSeatsQuantity(
-                session, filter);
+        List<Car> cars = carRepository.findAllByColourAndSeatsQuantity(filter);
 
         assertThat(cars).hasSize(2);
 

@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class UserRepositoryIT {
 
     private static final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
+    private static final int ID_FIRST = 1;
 
     @BeforeAll
     static void initDb() {
@@ -65,9 +66,9 @@ public class UserRepositoryIT {
         session.beginTransaction();
 
         var userRepository = new UserRepository(session);
-        userRepository.delete(1);
+        userRepository.delete(ID_FIRST);
 
-        User user = session.get(User.class, 1);
+        User user = session.get(User.class, ID_FIRST);
         assertNull(user);
 
         session.getTransaction().rollback();
@@ -82,12 +83,12 @@ public class UserRepositoryIT {
 
         var userRepository = new UserRepository(session);
 
-        User user = session.get(User.class, 1);
+        User user = session.get(User.class, ID_FIRST);
         user.setFirstName("Sveta");
         userRepository.update(user);
 
         session.flush();
-        User user1 = session.get(User.class, 1);
+        User user1 = session.get(User.class, ID_FIRST);
         assertThat(user1.getFirstName()).isEqualTo("Sveta");
 
         session.getTransaction().rollback();
@@ -102,7 +103,7 @@ public class UserRepositoryIT {
 
         var userRepository = new UserRepository(session);
 
-        Optional<User> user = userRepository.findById(1);
+        Optional<User> user = userRepository.findById(ID_FIRST);
 
         assertThat(user).isNotNull();
         user.ifPresent(value -> assertThat(value.getFirstName()).isEqualTo("Bob"));
@@ -138,8 +139,7 @@ public class UserRepositoryIT {
 
         var userRepository = new UserRepository(session);
 
-        Optional<User> user = userRepository.findByEmailAndPasswordWithCriteriaAPI(
-                session, "test1@tut.by", "test1");
+        Optional<User> user = userRepository.findByEmailAndPasswordWithCriteriaAPI("test1@tut.by", "test1");
 
         user.ifPresent(value -> assertThat(value).isNotNull());
         user.ifPresent(value -> assertThat(value.fullName()).isEqualTo("Bob Robson"));
@@ -156,8 +156,7 @@ public class UserRepositoryIT {
 
         var userRepository = new UserRepository(session);
 
-        Optional<User> user = userRepository.findByEmailAndPasswordWithQuerydsl(
-                session, "test1@tut.by", "test1");
+        Optional<User> user = userRepository.findByEmailAndPasswordWithQuerydsl("test1@tut.by", "test1");
 
         user.ifPresent(value -> assertThat(value).isNotNull());
         user.ifPresent(value -> assertThat(value.fullName()).isEqualTo("Bob Robson"));
@@ -179,8 +178,7 @@ public class UserRepositoryIT {
                 .lastName("Robson")
                 .build();
 
-        List<User> users = userRepository.findByFirstNameAndLastNameWithCriteriaAPI(
-                session, filter);
+        List<User> users = userRepository.findByFirstNameAndLastNameWithCriteriaAPI(filter);
 
         assertThat(users).hasSize(1);
 
@@ -203,8 +201,7 @@ public class UserRepositoryIT {
                 .firstName("Bob")
                 .lastName("Robson")
                 .build();
-        List<User> users = userRepository.findByFirstNameAndLastNameWithQuerydsl(
-                session, filter);
+        List<User> users = userRepository.findByFirstNameAndLastNameWithQuerydsl(filter);
 
         assertThat(users).hasSize(1);
 

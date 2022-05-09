@@ -6,7 +6,6 @@ import by.lav.dto.UserFilter;
 import by.lav.entity.User;
 import by.lav.entity.User_;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
@@ -21,8 +20,8 @@ public class UserRepository extends RepositoryBase<Integer, User> {
         super(User.class, entityManager);
     }
 
-    public Optional<User> findByEmailAndPasswordWithCriteriaAPI(Session session, String email, String password) {
-        var cb = session.getCriteriaBuilder();
+    public Optional<User> findByEmailAndPasswordWithCriteriaAPI(String email, String password) {
+        var cb = getEntityManager().getCriteriaBuilder();
 
         var criteria = cb.createQuery(User.class);
         var user = criteria.from(User.class);
@@ -32,20 +31,20 @@ public class UserRepository extends RepositoryBase<Integer, User> {
                 cb.equal(user.get(User_.PASSWORD), password)
         );
 
-        return session.createQuery(criteria)
-                .uniqueResultOptional();
+        return Optional.ofNullable(getEntityManager().createQuery(criteria)
+                .getSingleResult());
     }
 
-    public Optional<User> findByEmailAndPasswordWithQuerydsl(Session session, String email, String password) {
-        return Optional.ofNullable(new JPAQuery<User>(session)
+    public Optional<User> findByEmailAndPasswordWithQuerydsl(String email, String password) {
+        return Optional.ofNullable(new JPAQuery<User>(getEntityManager())
                 .select(user)
                 .from(user)
                 .where(user.email.eq(email), user.password.eq(password))
                 .fetchOne());
     }
 
-    public List<User> findByFirstNameAndLastNameWithCriteriaAPI(Session session, UserFilter filter) {
-        var cb = session.getCriteriaBuilder();
+    public List<User> findByFirstNameAndLastNameWithCriteriaAPI(UserFilter filter) {
+        var cb = getEntityManager().getCriteriaBuilder();
 
         var criteria = cb.createQuery(User.class);
         var user = criteria.from(User.class);
@@ -57,17 +56,17 @@ public class UserRepository extends RepositoryBase<Integer, User> {
 
         criteria.select(user).where(predicate);
 
-        return session.createQuery(criteria)
-                .list();
+        return getEntityManager().createQuery(criteria)
+                .getResultList();
     }
 
-    public List<User> findByFirstNameAndLastNameWithQuerydsl(Session session, UserFilter filter) {
+    public List<User> findByFirstNameAndLastNameWithQuerydsl(UserFilter filter) {
         var predicate = QPredicate.builder()
                 .add(filter.getFirstName(), user.firstName::eq)
                 .add(filter.getLastName(), user.lastName::eq)
                 .buildAnd();
 
-        return new JPAQuery<User>(session)
+        return new JPAQuery<User>(getEntityManager())
                 .select(user)
                 .from(user)
                 .where(predicate)

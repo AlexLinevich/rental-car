@@ -26,6 +26,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"user", "car", "rentalTimes"})
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -36,12 +37,10 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @ToString.Exclude
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "car_id")
-    @ToString.Exclude
     private Car car;
 
     private LocalDateTime beginTime;
@@ -55,7 +54,6 @@ public class Order {
 
     @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    @ToString.Exclude
     private List<RentalTime> rentalTimes = new ArrayList<>();
 
     public void setUser(User user) {

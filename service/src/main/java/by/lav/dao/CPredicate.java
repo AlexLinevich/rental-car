@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class CPredicate {
 
-    List<Predicate> predicates = new ArrayList<>();
+    private final List<Predicate> predicates = new ArrayList<>();
 
     private CPredicate() {
     }

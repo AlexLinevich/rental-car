@@ -22,6 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"carCategory", "orders", "rentalTimes"})
 @Entity
 public class Car {
 
@@ -33,7 +34,6 @@ public class Car {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "car_category_id")
-    @ToString.Exclude
     private CarCategory carCategory;
 
     private String colour;
@@ -44,11 +44,9 @@ public class Car {
 
     @Builder.Default
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL)
-    @ToString.Exclude
     private List<Order> orders = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL)
-    @ToString.Exclude
     private List<RentalTime> rentalTimes = new ArrayList<>();
 }

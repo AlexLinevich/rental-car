@@ -4,8 +4,8 @@ import by.lav.dao.QPredicate;
 import by.lav.dto.CarFilter;
 import by.lav.entity.Car;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.hibernate.Session;
 import org.hibernate.graph.GraphSemantic;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -13,17 +13,18 @@ import java.util.Optional;
 
 import static by.lav.entity.QCar.car;
 
+@Component
 public class CarRepository extends RepositoryBase<Integer, Car> {
 
     public CarRepository(EntityManager entityManager) {
         super(Car.class, entityManager);
     }
 
-    public List<Car> findAllByCarCategory(Session session, String carCategory) {
-        var carGraph = session.createEntityGraph(Car.class);
+    public List<Car> findAllByCarCategory(String carCategory) {
+        var carGraph = getEntityManager().createEntityGraph(Car.class);
         carGraph.addAttributeNodes("carCategory");
 
-        return new JPAQuery<Car>(session)
+        return new JPAQuery<Car>(getEntityManager())
                 .select(car)
                 .setHint(GraphSemantic.LOAD.getJpaHintName(), carGraph)
                 .from(car)
@@ -31,8 +32,8 @@ public class CarRepository extends RepositoryBase<Integer, Car> {
                 .fetch();
     }
 
-    public Optional<Double> findDayPriceByCarModel(Session session, String carModel) {
-        return Optional.ofNullable(new JPAQuery<Double>(session)
+    public Optional<Double> findDayPriceByCarModel(String carModel) {
+        return Optional.ofNullable(new JPAQuery<Double>(getEntityManager())
                 .select(car.carCategory.dayPrice)
                 .from(car)
                 .where(car.model.eq(carModel))
@@ -40,13 +41,13 @@ public class CarRepository extends RepositoryBase<Integer, Car> {
 
     }
 
-    public List<Car> findAllByColourAndSeatsQuantity(Session session, CarFilter filter) {
+    public List<Car> findAllByColourAndSeatsQuantity(CarFilter filter) {
         var predicate = QPredicate.builder()
                 .add(filter.getColour(), car.colour::eq)
                 .add(filter.getSeatsQuantity(), car.seatsQuantity::eq)
                 .buildAnd();
 
-        return new JPAQuery<Car>(session)
+        return new JPAQuery<Car>(getEntityManager())
                 .select(car)
                 .from(car)
                 .where(predicate)
