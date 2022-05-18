@@ -1,15 +1,13 @@
 package by.lav.repository;
 
 import by.lav.entity.RentalTime;
-import by.lav.util.HibernateUtil;
+import by.lav.repository.annotation.IT;
 import by.lav.util.TestDataImporter;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Proxy;
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,87 +17,66 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@IT
+@RequiredArgsConstructor
 public class RentalTimeRepositoryIT {
 
-    private static final SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
     private static final int ID_FIRST = 1;
 
-    @BeforeAll
-    static void initDb() {
-        TestDataImporter.importData(sessionFactory);
-    }
+    private final RentalTimeRepository rentalTimeRepository;
+    private final EntityManager entityManager;
 
-    @AfterAll
-    static void finish() {
-        sessionFactory.close();
+    @BeforeEach
+    void initDb() {
+        TestDataImporter.importData(entityManager);
     }
 
     @Test
     void checkSaveRentalTime() {
-        var session = (Session) Proxy.newProxyInstance(
-                SessionFactory.class.getClassLoader(), new Class[]{Session.class},
-                (proxy, method, args1) -> method.invoke(sessionFactory.getCurrentSession(), args1));
-        session.beginTransaction();
-
         RentalTime rentalTime = RentalTime.builder()
                 .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
                 .build();
 
-        var rentalTimeRepository = new RentalTimeRepository(session);
         var save = rentalTimeRepository.save(rentalTime);
 
         assertNotNull(save.getId());
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void checkDeleteRentalTime() {
-        var session = (Session) Proxy.newProxyInstance(
-                SessionFactory.class.getClassLoader(), new Class[]{Session.class},
-                (proxy, method, args1) -> method.invoke(sessionFactory.getCurrentSession(), args1));
-        session.beginTransaction();
+        RentalTime rentalTime = RentalTime.builder()
+                .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
+                .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
+                .build();
 
-        var rentalTimeRepository = new RentalTimeRepository(session);
-        rentalTimeRepository.delete(ID_FIRST);
+        var savedRentalTime = rentalTimeRepository.save(rentalTime);
 
-        RentalTime rentalTime = session.get(RentalTime.class, ID_FIRST);
-        assertNull(rentalTime);
+        rentalTimeRepository.delete(savedRentalTime.getId());
 
-        session.getTransaction().rollback();
+        RentalTime rentalTime1 = entityManager.find(RentalTime.class, savedRentalTime.getId());
+        assertNull(rentalTime1);
     }
 
     @Test
     void checkUpdateRentalTime() {
-        var session = (Session) Proxy.newProxyInstance(
-                SessionFactory.class.getClassLoader(), new Class[]{Session.class},
-                (proxy, method, args1) -> method.invoke(sessionFactory.getCurrentSession(), args1));
-        session.beginTransaction();
+        RentalTime rentalTime = RentalTime.builder()
+                .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
+                .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
+                .build();
 
-        var rentalTimeRepository = new RentalTimeRepository(session);
+        var savedRentalTime = rentalTimeRepository.save(rentalTime);
+        savedRentalTime.setBeginTime(LocalDateTime.of(2025, 1, 25, 12, 0));
+        rentalTimeRepository.update(savedRentalTime);
 
-        RentalTime rentalTime = session.get(RentalTime.class, ID_FIRST);
-        rentalTime.setBeginTime(LocalDateTime.of(2025, 1, 25, 12, 0));
-        rentalTimeRepository.update(rentalTime);
-
-        session.flush();
-        RentalTime rentalTime1 = session.get(RentalTime.class, ID_FIRST);
+        entityManager.flush();
+        RentalTime rentalTime1 = entityManager.find(RentalTime.class, savedRentalTime.getId());
         assertThat(rentalTime1.getBeginTime())
                 .isEqualTo(LocalDateTime.of(2025, 1, 25, 12, 0));
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void checkFindByIdRentalTime() {
-        var session = (Session) Proxy.newProxyInstance(
-                SessionFactory.class.getClassLoader(), new Class[]{Session.class},
-                (proxy, method, args1) -> method.invoke(sessionFactory.getCurrentSession(), args1));
-        session.beginTransaction();
-
-        var rentalTimeRepository = new RentalTimeRepository(session);
-
         var beginTime = LocalDateTime.of(2020, 1, 25, 12, 0);
         var endTime = LocalDateTime.of(2020, 1, 29, 18, 0);
 
@@ -109,19 +86,10 @@ public class RentalTimeRepositoryIT {
         assertThat(rentalTime).isNotNull();
         rentalTime.ifPresent(value -> assertThat(value.getBeginTime()).isEqualTo(beginTime));
         rentalTime.ifPresent(value -> assertThat(value.getEndTime()).isEqualTo(endTime));
-
-        session.getTransaction().rollback();
     }
 
     @Test
     void checkFindAllRentalTimes() {
-        var session = (Session) Proxy.newProxyInstance(
-                SessionFactory.class.getClassLoader(), new Class[]{Session.class},
-                (proxy, method, args1) -> method.invoke(sessionFactory.getCurrentSession(), args1));
-        session.beginTransaction();
-
-        var rentalTimeRepository = new RentalTimeRepository(session);
-
         List<RentalTime> results = rentalTimeRepository.findAll();
         assertThat(results).hasSize(4);
 
@@ -131,7 +99,5 @@ public class RentalTimeRepositoryIT {
         var beginTime4 = LocalDateTime.of(2020, 3, 25, 12, 0);
         List<LocalDateTime> beginTimes = results.stream().map(RentalTime::getBeginTime).collect(toList());
         assertThat(beginTimes).containsExactlyInAnyOrder(beginTime1, beginTime2, beginTime3, beginTime4);
-
-        session.getTransaction().rollback();
     }
 }

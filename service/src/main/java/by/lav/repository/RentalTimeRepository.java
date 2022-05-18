@@ -1,11 +1,13 @@
 package by.lav.repository;
 
 import by.lav.entity.RentalTime;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
-@Component
+@Repository
+@Transactional
 public class RentalTimeRepository extends RepositoryBase<Integer, RentalTime> {
 
     public RentalTimeRepository(EntityManager entityManager) {

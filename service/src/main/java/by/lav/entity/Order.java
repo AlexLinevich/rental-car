@@ -53,7 +53,7 @@ public class Order {
     private String message;
 
     @Builder.Default
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order")
     private List<RentalTime> rentalTimes = new ArrayList<>();
 
     public void setUser(User user) {

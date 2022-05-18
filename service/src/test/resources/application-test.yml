@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:lav
+    username:
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    properties.hibernate:
+      show_sql: true
+      format_sql: true
+      hbm2ddl.auto: create
+      current_session_context_class: thread
+
+logging:
+  level:
+    root: INFO

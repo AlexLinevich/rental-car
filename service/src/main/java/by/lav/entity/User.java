@@ -49,7 +49,7 @@ public class User {
     private ClientData clientData;
 
     @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     @ToString.Exclude
     private List<Order> orders = new ArrayList<>();
 

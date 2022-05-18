@@ -8,91 +8,86 @@ import by.lav.entity.OrderStatus;
 import by.lav.entity.RentalTime;
 import by.lav.entity.Role;
 import by.lav.entity.User;
-import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @UtilityClass
 public class TestDataImporter {
 
-    public void importData(SessionFactory sessionFactory) {
-        @Cleanup Session session = sessionFactory.openSession();
-        session.beginTransaction();
+    public void importData(EntityManager entityManager) {
+//        entityManager.createNativeQuery("");
 
-        User robson = saveUser(session, "Bob", "Robson", "test1@tut.by", "test1", Role.ADMIN);
-        User ivanov = saveUser(session, "Ivan", "Ivanov", "test2@tut.by", "test2", Role.CLIENT);
-        User semenov = saveUser(session, "Alex", "Semenov", "test3@tut.by", "test3", Role.CLIENT);
+        User robson = saveUser(entityManager, "Bob", "Robson", "test1@tut.by", "test1", Role.ADMIN);
+        User ivanov = saveUser(entityManager, "Ivan", "Ivanov", "test2@tut.by", "test2", Role.CLIENT);
+        User semenov = saveUser(entityManager, "Alex", "Semenov", "test3@tut.by", "test3", Role.CLIENT);
 
-        ClientData ivanovData = saveClientData(session, ivanov, "PB101121",
+        ClientData ivanovData = saveClientData(entityManager, ivanov, "PB101121",
                 LocalDate.of(2025, 8, 20), 1000.0);
-        ClientData semenovData = saveClientData(session, semenov, "PB104466",
+        ClientData semenovData = saveClientData(entityManager, semenov, "PB104466",
                 LocalDate.of(2028, 1, 30), 2000.0);
 
-        CarCategory middleSuv = saveCarCategory(session, "MIDDLE SUV", 50.0);
-        CarCategory largeSuv = saveCarCategory(session, "LARGE SUV", 70.0);
-        CarCategory largeSedan = saveCarCategory(session, "LARGE SEDAN", 60.0);
+        CarCategory middleSuv = saveCarCategory(entityManager, "MIDDLE SUV", 50.0);
+        CarCategory largeSuv = saveCarCategory(entityManager, "LARGE SUV", 70.0);
+        CarCategory largeSedan = saveCarCategory(entityManager, "LARGE SEDAN", 60.0);
 
-        Car toyotaCamry = saveCar(session, "TOYOTA CAMRY", "WHITE", 5, largeSedan);
-        Car mazda6 = saveCar(session, "MAZDA 6", "BLACK", 5, largeSedan);
-        Car toyotaLandcruiser = saveCar(session, "TOYOTA LANDCRUISER", "WHITE", 7, largeSuv);
-        Car mazdaCX9 = saveCar(session, "MAZDA CX-9", "WHITE", 7, largeSuv);
-        Car toyotaRAV4 = saveCar(session, "TOYOTA RAV4", "BLACK", 5, middleSuv);
-        Car mazdaCX5 = saveCar(session, "MAZDA CX-5", "RED", 5, middleSuv);
+        Car toyotaCamry = saveCar(entityManager, "TOYOTA CAMRY", "WHITE", 5, largeSedan);
+        Car mazda6 = saveCar(entityManager, "MAZDA 6", "BLACK", 5, largeSedan);
+        Car toyotaLandcruiser = saveCar(entityManager, "TOYOTA LANDCRUISER", "WHITE", 7, largeSuv);
+        Car mazdaCX9 = saveCar(entityManager, "MAZDA CX-9", "WHITE", 7, largeSuv);
+        Car toyotaRAV4 = saveCar(entityManager, "TOYOTA RAV4", "BLACK", 5, middleSuv);
+        Car mazdaCX5 = saveCar(entityManager, "MAZDA CX-5", "RED", 5, middleSuv);
 
-        Order order1 = saveOrder(session,
+        Order order1 = saveOrder(entityManager,
                 ivanov,
-                toyotaCamry,
+                toyotaRAV4,
                 LocalDateTime.of(2020, 1, 25, 12, 0),
                 LocalDateTime.of(2020, 1, 29, 18, 0),
                 OrderStatus.ACCEPTED);
-        Order order2 = saveOrder(session,
-                ivanov,
+        Order order2 = saveOrder(entityManager,
+                robson,
                 mazdaCX9,
                 LocalDateTime.of(2020, 2, 25, 12, 0),
                 LocalDateTime.of(2020, 2, 28, 12, 0),
                 OrderStatus.ACCEPTED);
-        Order order3 = saveOrder(session,
+        Order order3 = saveOrder(entityManager,
                 semenov,
                 mazdaCX9,
                 LocalDateTime.of(2020, 5, 25, 12, 0),
                 LocalDateTime.of(2020, 5, 28, 12, 0),
                 OrderStatus.ACCEPTED);
-        Order order4 = saveOrder(session,
+        Order order4 = saveOrder(entityManager,
                 semenov,
                 mazda6,
                 LocalDateTime.of(2020, 3, 25, 12, 0),
                 LocalDateTime.of(2020, 3, 28, 12, 0),
                 OrderStatus.CANCELED);
 
-        saveRentalTime(session,
+        saveRentalTime(entityManager,
                 order1,
-                toyotaCamry,
+                toyotaRAV4,
                 LocalDateTime.of(2020, 1, 25, 12, 0),
                 LocalDateTime.of(2020, 1, 29, 18, 0));
-        saveRentalTime(session,
+        saveRentalTime(entityManager,
                 order2,
                 mazdaCX9,
                 LocalDateTime.of(2020, 2, 25, 12, 0),
                 LocalDateTime.of(2020, 2, 28, 12, 0));
-        saveRentalTime(session,
+        saveRentalTime(entityManager,
                 order3,
                 mazdaCX9,
                 LocalDateTime.of(2020, 5, 25, 12, 0),
                 LocalDateTime.of(2020, 5, 28, 12, 0));
-        saveRentalTime(session,
+        saveRentalTime(entityManager,
                 order4,
                 mazda6,
                 LocalDateTime.of(2020, 3, 25, 12, 0),
                 LocalDateTime.of(2020, 3, 28, 12, 0));
-
-        session.getTransaction().commit();
     }
 
-    private User saveUser(Session session,
+    private User saveUser(EntityManager entityManager,
                           String firstName,
                           String lastName,
                           String email,
@@ -105,12 +100,12 @@ public class TestDataImporter {
                 .password(password)
                 .role(role)
                 .build();
-        session.save(user);
+        entityManager.persist(user);
 
         return user;
     }
 
-    private ClientData saveClientData(Session session,
+    private ClientData saveClientData(EntityManager entityManager,
                                       User user,
                                       String driverLicenceNo,
                                       LocalDate dlExpirationDay,
@@ -121,24 +116,24 @@ public class TestDataImporter {
                 .dlExpirationDay(dlExpirationDay)
                 .creditAmount(creditAmount)
                 .build();
-        session.save(clientData);
+        entityManager.persist(clientData);
 
         return clientData;
     }
 
-    private CarCategory saveCarCategory(Session session,
+    private CarCategory saveCarCategory(EntityManager entityManager,
                                         String category,
                                         Double dayPrice) {
         CarCategory carCategory = CarCategory.builder()
                 .category(category)
                 .dayPrice(dayPrice)
                 .build();
-        session.save(carCategory);
+        entityManager.persist(carCategory);
 
         return carCategory;
     }
 
-    private Car saveCar(Session session,
+    private Car saveCar(EntityManager entityManager,
                         String model,
                         String colour,
                         Integer seatsQuantity,
@@ -149,12 +144,12 @@ public class TestDataImporter {
                 .colour(colour)
                 .seatsQuantity(seatsQuantity)
                 .build();
-        session.save(car);
+        entityManager.persist(car);
 
         return car;
     }
 
-    private Order saveOrder(Session session,
+    private Order saveOrder(EntityManager entityManager,
                             User user,
                             Car car,
                             LocalDateTime beginTime,
@@ -167,11 +162,11 @@ public class TestDataImporter {
                 .endTime(endTime)
                 .status(status)
                 .build();
-        session.save(order);
+        entityManager.persist(order);
         return order;
     }
 
-    private void saveRentalTime(Session session,
+    private void saveRentalTime(EntityManager entityManager,
                                 Order order,
                                 Car car,
                                 LocalDateTime beginTime,
@@ -182,6 +177,6 @@ public class TestDataImporter {
                 .beginTime(beginTime)
                 .endTime(endTime)
                 .build();
-        session.save(rentalTime);
+        entityManager.persist(rentalTime);
     }
 }

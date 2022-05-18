@@ -3,7 +3,8 @@ package by.lav.repository;
 import by.lav.entity.Order;
 import by.lav.entity.OrderStatus;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
@@ -11,7 +12,8 @@ import java.util.List;
 
 import static by.lav.entity.QOrder.order;
 
-@Component
+@Repository
+@Transactional
 public class OrderRepository extends RepositoryBase<Integer, Order> {
 
     public OrderRepository(EntityManager entityManager) {

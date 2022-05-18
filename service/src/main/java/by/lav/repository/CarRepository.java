@@ -5,7 +5,8 @@ import by.lav.dto.CarFilter;
 import by.lav.entity.Car;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.graph.GraphSemantic;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -13,7 +14,8 @@ import java.util.Optional;
 
 import static by.lav.entity.QCar.car;
 
-@Component
+@Repository
+@Transactional
 public class CarRepository extends RepositoryBase<Integer, Car> {
 
     public CarRepository(EntityManager entityManager) {

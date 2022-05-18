@@ -6,6 +6,8 @@ import by.lav.dto.UserFilter;
 import by.lav.entity.User;
 import by.lav.entity.User_;
 import com.querydsl.jpa.impl.JPAQuery;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
@@ -14,6 +16,8 @@ import java.util.Optional;
 
 import static by.lav.entity.QUser.user;
 
+@Repository
+@Transactional
 public class UserRepository extends RepositoryBase<Integer, User> {
 
     public UserRepository(EntityManager entityManager) {
