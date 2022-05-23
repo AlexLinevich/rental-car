@@ -1,16 +1,13 @@
 package by.lav.repository;
 
 import by.lav.entity.CarCategory;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-import javax.persistence.EntityManager;
+import java.util.Optional;
 
-@Repository
-@Transactional
-public class CarCategoryRepository extends RepositoryBase<Integer, CarCategory> {
+public interface CarCategoryRepository extends JpaRepository<CarCategory, Integer>,
+        QuerydslPredicateExecutor<CarCategory> {
 
-    public CarCategoryRepository(EntityManager entityManager) {
-        super(CarCategory.class, entityManager);
-    }
+    Optional<CarCategory> findByCategory(String categoryName);
 }

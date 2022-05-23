@@ -1,16 +1,7 @@
 package by.lav.repository;
 
 import by.lav.entity.ClientData;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.persistence.EntityManager;
-
-@Repository
-@Transactional
-public class ClientDataRepository extends RepositoryBase<Integer, ClientData> {
-
-    public ClientDataRepository(EntityManager entityManager) {
-        super(ClientData.class, entityManager);
-    }
+public interface ClientDataRepository extends JpaRepository<ClientData,Integer> {
 }

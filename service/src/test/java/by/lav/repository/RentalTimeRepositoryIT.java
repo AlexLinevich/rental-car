@@ -2,12 +2,10 @@ package by.lav.repository;
 
 import by.lav.entity.RentalTime;
 import by.lav.repository.annotation.IT;
-import by.lav.util.TestDataImporter;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -15,21 +13,18 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @IT
+@Sql({
+        "classpath:sql/data.sql"
+})
 @RequiredArgsConstructor
 public class RentalTimeRepositoryIT {
 
     private static final int ID_FIRST = 1;
 
     private final RentalTimeRepository rentalTimeRepository;
-    private final EntityManager entityManager;
-
-    @BeforeEach
-    void initDb() {
-        TestDataImporter.importData(entityManager);
-    }
 
     @Test
     void checkSaveRentalTime() {
@@ -38,9 +33,9 @@ public class RentalTimeRepositoryIT {
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
                 .build();
 
-        var save = rentalTimeRepository.save(rentalTime);
+        rentalTimeRepository.save(rentalTime);
 
-        assertNotNull(save.getId());
+        assertNotNull(rentalTime.getId());
     }
 
     @Test
@@ -50,12 +45,12 @@ public class RentalTimeRepositoryIT {
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
                 .build();
 
-        var savedRentalTime = rentalTimeRepository.save(rentalTime);
+        rentalTimeRepository.save(rentalTime);
 
-        rentalTimeRepository.delete(savedRentalTime.getId());
+        rentalTimeRepository.delete(rentalTime);
 
-        RentalTime rentalTime1 = entityManager.find(RentalTime.class, savedRentalTime.getId());
-        assertNull(rentalTime1);
+        Optional<RentalTime> deletedRentalTime = rentalTimeRepository.findById(rentalTime.getId());
+        assertTrue(deletedRentalTime.isEmpty());
     }
 
     @Test
@@ -65,13 +60,12 @@ public class RentalTimeRepositoryIT {
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
                 .build();
 
-        var savedRentalTime = rentalTimeRepository.save(rentalTime);
-        savedRentalTime.setBeginTime(LocalDateTime.of(2025, 1, 25, 12, 0));
-        rentalTimeRepository.update(savedRentalTime);
+        rentalTimeRepository.save(rentalTime);
+        rentalTime.setBeginTime(LocalDateTime.of(2025, 1, 25, 12, 0));
+        rentalTimeRepository.saveAndFlush(rentalTime);
 
-        entityManager.flush();
-        RentalTime rentalTime1 = entityManager.find(RentalTime.class, savedRentalTime.getId());
-        assertThat(rentalTime1.getBeginTime())
+        RentalTime updatedRentalTime = rentalTimeRepository.getById(rentalTime.getId());
+        assertThat(updatedRentalTime.getBeginTime())
                 .isEqualTo(LocalDateTime.of(2025, 1, 25, 12, 0));
     }
 

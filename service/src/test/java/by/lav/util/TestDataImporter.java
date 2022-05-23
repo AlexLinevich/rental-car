@@ -18,8 +18,6 @@ import java.time.LocalDateTime;
 public class TestDataImporter {
 
     public void importData(EntityManager entityManager) {
-//        entityManager.createNativeQuery("");
-
         User robson = saveUser(entityManager, "Bob", "Robson", "test1@tut.by", "test1", Role.ADMIN);
         User ivanov = saveUser(entityManager, "Ivan", "Ivanov", "test2@tut.by", "test2", Role.CLIENT);
         User semenov = saveUser(entityManager, "Alex", "Semenov", "test3@tut.by", "test3", Role.CLIENT);

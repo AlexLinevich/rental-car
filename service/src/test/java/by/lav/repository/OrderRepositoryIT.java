@@ -3,12 +3,10 @@ package by.lav.repository;
 import by.lav.entity.Order;
 import by.lav.entity.OrderStatus;
 import by.lav.repository.annotation.IT;
-import by.lav.util.TestDataImporter;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -16,21 +14,18 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @IT
+@Sql({
+        "classpath:sql/data.sql"
+})
 @RequiredArgsConstructor
 public class OrderRepositoryIT {
 
     private static final int ID_FIRST = 1;
 
     private final OrderRepository orderRepository;
-    private final EntityManager entityManager;
-
-    @BeforeEach
-    void initDb() {
-        TestDataImporter.importData(entityManager);
-    }
 
     @Test
     void checkSaveOrder() {
@@ -51,13 +46,12 @@ public class OrderRepositoryIT {
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
                 .build();
 
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
+        orderRepository.delete(order);
 
-        orderRepository.delete(savedOrder.getId());
+        Optional<Order> deletedOrder = orderRepository.findById(order.getId());
 
-        Order order1 = entityManager.find(Order.class, savedOrder.getId());
-
-        assertNull(order1);
+        assertTrue(deletedOrder.isEmpty());
     }
 
     @Test
@@ -67,16 +61,14 @@ public class OrderRepositoryIT {
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
                 .build();
 
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
         var beginTime = LocalDateTime.of(2025, 1, 25, 12, 0);
-        Order order1 = entityManager.find(Order.class, savedOrder.getId());
-        order1.setBeginTime(beginTime);
-        orderRepository.update(order1);
+        order.setBeginTime(beginTime);
+        orderRepository.saveAndFlush(order);
 
-        entityManager.flush();
-        Order order2 = entityManager.find(Order.class, savedOrder.getId());
+        Order updatedOrder = orderRepository.getById(order.getId());
 
-        assertThat(order2.getBeginTime()).isEqualTo(beginTime);
+        assertThat(updatedOrder.getBeginTime()).isEqualTo(beginTime);
     }
 
     @Test

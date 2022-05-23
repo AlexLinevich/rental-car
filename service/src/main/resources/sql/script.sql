@@ -1,6 +1,6 @@
 CREATE DATABASE new_rental_car;
 
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     id         SERIAL PRIMARY KEY,
     first_name VARCHAR(128) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE users
     role       VARCHAR(32)  not null
 );
 
-CREATE TABLE client_data
+CREATE TABLE  IF NOT EXISTS client_data
 (
     id                SERIAL PRIMARY KEY,
     user_id           INT REFERENCES users (id) NOT NULL UNIQUE,
@@ -19,14 +19,14 @@ CREATE TABLE client_data
     credit_amount     NUMERIC(8, 2)             NOT NULL
 );
 
-CREATE TABLE car_category
+CREATE TABLE  IF NOT EXISTS car_category
 (
     id        SERIAL PRIMARY KEY,
     category  VARCHAR(128)  NOT NULL UNIQUE,
     day_price NUMERIC(8, 2) NOT NULL
 );
 
-CREATE TABLE car
+CREATE TABLE  IF NOT EXISTS car
 (
     id              SERIAL PRIMARY KEY,
     model           VARCHAR(32)                      NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE car
     image           VARCHAR(128)                     NOT NULL
 );
 
-CREATE TABLE orders
+CREATE TABLE  IF NOT EXISTS orders
 (
     id         SERIAL PRIMARY KEY,
     user_id    INT REFERENCES users (id) NOT NULL UNIQUE ,
@@ -47,7 +47,7 @@ CREATE TABLE orders
     message    TEXT
 );
 
-CREATE TABLE rental_time
+CREATE TABLE  IF NOT EXISTS rental_time
 (
     id         SERIAL PRIMARY KEY,
     car_id     INT REFERENCES car (id)    NOT NULL,

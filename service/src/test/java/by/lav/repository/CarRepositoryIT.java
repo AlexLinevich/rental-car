@@ -1,35 +1,34 @@
 package by.lav.repository;
 
+import by.lav.dao.QPredicate;
 import by.lav.dto.CarFilter;
 import by.lav.entity.Car;
+import by.lav.entity.CarCategory;
 import by.lav.repository.annotation.IT;
-import by.lav.util.TestDataImporter;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
+import static by.lav.entity.QCar.car;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @IT
+@Sql({
+        "classpath:sql/data.sql"
+})
 @RequiredArgsConstructor
 public class CarRepositoryIT {
 
     private static final int ID_FIRST = 1;
 
     private final CarRepository carRepository;
-    private final EntityManager entityManager;
-
-    @BeforeEach
-    void initDb() {
-        TestDataImporter.importData(entityManager);
-    }
+    private final CarCategoryRepository carCategoryRepository;
 
     @Test
     void checkSaveCar() {
@@ -39,42 +38,41 @@ public class CarRepositoryIT {
                 .seatsQuantity(5)
                 .build();
 
-        var savedCar = carRepository.save(car);
+        carRepository.save(car);
 
-        assertNotNull(savedCar.getId());
+        assertNotNull(car.getId());
     }
 
     @Test
     void checkDeleteCar() {
-        Car carForSave = Car.builder()
+        Car car = Car.builder()
                 .model("BMW")
                 .colour("GREEN")
                 .seatsQuantity(5)
                 .build();
 
-        var savedCar = carRepository.save(carForSave);
+        carRepository.save(car);
 
-        carRepository.delete(savedCar.getId());
+        carRepository.delete(car);
 
-        Car car = entityManager.find(Car.class, savedCar.getId());
-        assertNull(car);
+        Optional<Car> deletedCar = carRepository.findById(car.getId());
+        assertTrue(deletedCar.isEmpty());
     }
 
     @Test
     void checkUpdateCar() {
-        Car carForSave = Car.builder()
+        Car car = Car.builder()
                 .model("BMW")
                 .colour("GREEN")
                 .seatsQuantity(5)
                 .build();
 
-        var savedCar = carRepository.save(carForSave);
-        savedCar.setColour("BLUE");
-        carRepository.update(savedCar);
+        carRepository.save(car);
+        car.setColour("BLUE");
+        carRepository.saveAndFlush(car);
 
-        entityManager.flush();
-        Car car = entityManager.find(Car.class, savedCar.getId());
-        assertThat(car.getColour()).isEqualTo("BLUE");
+        Car updatedCar = carRepository.getById(car.getId());
+        assertThat(updatedCar.getColour()).isEqualTo("BLUE");
     }
 
     @Test
@@ -98,13 +96,14 @@ public class CarRepositoryIT {
 
     @Test
     void findAllCarsByCarCategory() {
-        List<Car> results = carRepository.findAllByCarCategory("LARGE SUV");
+        Optional<CarCategory> largeSuv = carCategoryRepository.findByCategory("LARGE SUV");
+        List<Car> results = carRepository.findByCarCategory(largeSuv.orElseThrow());
         assertThat(results).hasSize(2);
     }
 
     @Test
     void findCarDayPriceByCarModel() {
-        Optional<Double> carDayPrice = carRepository.findDayPriceByCarModel("TOYOTA CAMRY");
+        Optional<Double> carDayPrice = carRepository.findDayPriceBy("TOYOTA CAMRY");
 
         assertThat(carDayPrice).isNotNull();
         carDayPrice.ifPresent(value -> assertThat(value).isEqualTo(60.0));
@@ -116,7 +115,12 @@ public class CarRepositoryIT {
                 .colour("WHITE")
                 .seatsQuantity(7)
                 .build();
-        List<Car> cars = carRepository.findAllByColourAndSeatsQuantity(filter);
+        var predicate = QPredicate.builder()
+                .add(filter.getColour(), car.colour::eq)
+                .add(filter.getSeatsQuantity(), car.seatsQuantity::eq)
+                .buildAnd();
+
+        List<Car> cars = (List<Car>) carRepository.findAll(predicate);
 
         assertThat(cars).hasSize(2);
 

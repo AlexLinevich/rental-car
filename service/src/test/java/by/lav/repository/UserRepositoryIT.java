@@ -1,36 +1,33 @@
 package by.lav.repository;
 
+import by.lav.dao.QPredicate;
 import by.lav.dto.UserFilter;
 import by.lav.entity.Role;
 import by.lav.entity.User;
 import by.lav.repository.annotation.IT;
-import by.lav.util.TestDataImporter;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
+import static by.lav.entity.QUser.user;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @IT
+@Sql({
+        "classpath:sql/data.sql"
+})
 @RequiredArgsConstructor
 public class UserRepositoryIT {
 
     private static final int ID_FIRST = 1;
 
     private final UserRepository userRepository;
-    private final EntityManager entityManager;
-
-    @BeforeEach
-    void initDb() {
-        TestDataImporter.importData(entityManager);
-    }
 
     @Test
     void checkSaveUser() {
@@ -57,12 +54,12 @@ public class UserRepositoryIT {
                 .role(Role.ADMIN)
                 .build();
 
-        User savedUser = userRepository.save(user);
+        userRepository.save(user);
 
-        userRepository.delete(savedUser.getId());
+        userRepository.delete(user);
 
-        User user1 = entityManager.find(User.class, savedUser.getId());
-        assertNull(user1);
+        Optional<User> deletedUser = userRepository.findById(user.getId());
+        assertTrue(deletedUser.isEmpty());
     }
 
     @Test
@@ -75,13 +72,12 @@ public class UserRepositoryIT {
                 .role(Role.ADMIN)
                 .build();
 
-        User savedUser = userRepository.save(user);
-        savedUser.setFirstName("Sveta");
-        userRepository.update(savedUser);
+        userRepository.save(user);
+        user.setFirstName("Sveta");
+        userRepository.saveAndFlush(user);
 
-        entityManager.flush();
-        User user1 = entityManager.find(User.class, savedUser.getId());
-        assertThat(user1.getFirstName()).isEqualTo("Sveta");
+        User updatedUser = userRepository.getById(user.getId());
+        assertThat(updatedUser.getFirstName()).isEqualTo("Sveta");
     }
 
     @Test
@@ -103,43 +99,25 @@ public class UserRepositoryIT {
     }
 
     @Test
-    void findUserByEmailAndPasswordWithCriteriaAPI() {
-        Optional<User> user = userRepository.findByEmailAndPasswordWithCriteriaAPI("test1@tut.by", "test1");
+    void findUserByEmailAndPassword() {
+        Optional<User> user = userRepository.findByEmailAndPassword("test1@tut.by", "test1");
 
         user.ifPresent(value -> assertThat(value).isNotNull());
         user.ifPresent(value -> assertThat(value.fullName()).isEqualTo("Bob Robson"));
     }
 
     @Test
-    void findUserByEmailAndPasswordWithQuerydsl() {
-        Optional<User> user = userRepository.findByEmailAndPasswordWithQuerydsl("test1@tut.by", "test1");
-
-        user.ifPresent(value -> assertThat(value).isNotNull());
-        user.ifPresent(value -> assertThat(value.fullName()).isEqualTo("Bob Robson"));
-    }
-
-    @Test
-    void findUsersByFirstNameAndLastNameWithCriteriaAPI() {
+    void findUsersByFirstNameAndLastName() {
         UserFilter filter = UserFilter.builder()
                 .firstName("Bob")
                 .lastName("Robson")
                 .build();
+        var predicate = QPredicate.builder()
+                .add(filter.getFirstName(), user.firstName::eq)
+                .add(filter.getLastName(), user.lastName::eq)
+                .buildAnd();
 
-        List<User> users = userRepository.findByFirstNameAndLastNameWithCriteriaAPI(filter);
-
-        assertThat(users).hasSize(1);
-
-        List<String> fullNames = users.stream().map(User::fullName).collect(toList());
-        assertThat(fullNames).containsExactlyInAnyOrder("Bob Robson");
-    }
-
-    @Test
-    void findUsersByFirstNameAndLastNameWithQuerydsl() {
-        UserFilter filter = UserFilter.builder()
-                .firstName("Bob")
-                .lastName("Robson")
-                .build();
-        List<User> users = userRepository.findByFirstNameAndLastNameWithQuerydsl(filter);
+        List<User> users = (List<User>) userRepository.findAll(predicate);
 
         assertThat(users).hasSize(1);
 
