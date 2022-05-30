@@ -1,10 +1,8 @@
 package by.lav.repository;
 
 import by.lav.entity.RentalTime;
-import by.lav.repository.annotation.IT;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,22 +13,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@IT
-@Sql({
-        "classpath:sql/data.sql"
-})
 @RequiredArgsConstructor
-public class RentalTimeRepositoryIT {
+public class RentalTimeRepositoryIT extends IntegrationTestBase {
 
     private static final int ID_FIRST = 1;
 
     private final RentalTimeRepository rentalTimeRepository;
+    private final CarRepository carRepository;
+    private final OrderRepository orderRepository;
 
     @Test
     void checkSaveRentalTime() {
         RentalTime rentalTime = RentalTime.builder()
+                .car(carRepository.getById(1))
                 .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
+                .order(orderRepository.getById(1))
                 .build();
 
         rentalTimeRepository.save(rentalTime);
@@ -41,8 +39,10 @@ public class RentalTimeRepositoryIT {
     @Test
     void checkDeleteRentalTime() {
         RentalTime rentalTime = RentalTime.builder()
+                .car(carRepository.getById(1))
                 .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
+                .order(orderRepository.getById(1))
                 .build();
 
         rentalTimeRepository.save(rentalTime);
@@ -56,8 +56,10 @@ public class RentalTimeRepositoryIT {
     @Test
     void checkUpdateRentalTime() {
         RentalTime rentalTime = RentalTime.builder()
+                .car(carRepository.getById(1))
                 .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
+                .order(orderRepository.getById(1))
                 .build();
 
         rentalTimeRepository.save(rentalTime);

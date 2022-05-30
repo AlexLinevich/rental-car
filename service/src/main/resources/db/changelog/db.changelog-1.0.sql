@@ -1,7 +1,7 @@
 --liquibase formatted sql
 
 --changeset alexlinevich:1
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     id         SERIAL PRIMARY KEY,
     first_name VARCHAR(128) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE users
     role       VARCHAR(32)  not null
 );
 
-CREATE TABLE client_data
+CREATE TABLE IF NOT EXISTS client_data
 (
     id                SERIAL PRIMARY KEY,
     user_id           INT REFERENCES users (id) NOT NULL UNIQUE,
@@ -20,28 +20,28 @@ CREATE TABLE client_data
     credit_amount     DOUBLE PRECISION          NOT NULL
 );
 
-CREATE TABLE car_category
+CREATE TABLE IF NOT EXISTS car_category
 (
     id        SERIAL PRIMARY KEY,
     category  VARCHAR(128)     NOT NULL UNIQUE,
     day_price DOUBLE PRECISION NOT NULL
 );
 
-CREATE TABLE car
+CREATE TABLE IF NOT EXISTS car
 (
     id              SERIAL PRIMARY KEY,
     model           VARCHAR(32)                      NOT NULL,
-    car_category_id INT REFERENCES car_category (id) NOT NULL UNIQUE,
+    car_category_id INT REFERENCES car_category (id) NOT NULL,
     colour          VARCHAR(32)                      NOT NULL,
     seats_quantity  INT                              NOT NULL,
     image           VARCHAR(128)                     NOT NULL
 );
 
-CREATE TABLE orders
+CREATE TABLE IF NOT EXISTS orders
 (
     id         SERIAL PRIMARY KEY,
-    user_id    INT REFERENCES users (id) NOT NULL UNIQUE,
-    car_id     INT REFERENCES car (id)   NOT NULL UNIQUE,
+    user_id    INT REFERENCES users (id) NOT NULL,
+    car_id     INT REFERENCES car (id)   NOT NULL,
     begin_time TIMESTAMP                 NOT NULL,
     end_time   TIMESTAMP                 NOT NULL,
     status     VARCHAR(32)               NOT NULL,
@@ -56,3 +56,4 @@ CREATE TABLE rental_time
     end_time   TIMESTAMP                  NOT NULL,
     order_id   INT REFERENCES orders (id) NOT NULL
 );
+

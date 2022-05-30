@@ -30,7 +30,7 @@ CREATE TABLE  IF NOT EXISTS car
 (
     id              SERIAL PRIMARY KEY,
     model           VARCHAR(32)                      NOT NULL,
-    car_category_id INT REFERENCES car_category (id) NOT NULL UNIQUE,
+    car_category_id INT REFERENCES car_category (id) NOT NULL,
     colour          VARCHAR(32)                      NOT NULL,
     seats_quantity  INT                              NOT NULL,
     image           VARCHAR(128)                     NOT NULL
@@ -39,8 +39,8 @@ CREATE TABLE  IF NOT EXISTS car
 CREATE TABLE  IF NOT EXISTS orders
 (
     id         SERIAL PRIMARY KEY,
-    user_id    INT REFERENCES users (id) NOT NULL UNIQUE ,
-    car_id     INT REFERENCES car (id)   NOT NULL UNIQUE ,
+    user_id    INT REFERENCES users (id) NOT NULL,
+    car_id     INT REFERENCES car (id)   NOT NULL,
     begin_time TIMESTAMP                 NOT NULL,
     end_time   TIMESTAMP                 NOT NULL,
     status     VARCHAR(32)               NOT NULL,

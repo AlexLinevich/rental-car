@@ -2,10 +2,8 @@ package by.lav.repository;
 
 import by.lav.entity.Order;
 import by.lav.entity.OrderStatus;
-import by.lav.repository.annotation.IT;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,22 +14,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@IT
-@Sql({
-        "classpath:sql/data.sql"
-})
 @RequiredArgsConstructor
-public class OrderRepositoryIT {
+public class OrderRepositoryIT extends IntegrationTestBase {
 
     private static final int ID_FIRST = 1;
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final CarRepository carRepository;
 
     @Test
     void checkSaveOrder() {
         var order = Order.builder()
+                .user(userRepository.getById(1))
+                .car(carRepository.getById(1))
                 .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
+                .status(OrderStatus.ACCEPTED)
                 .build();
 
         orderRepository.save(order);
@@ -42,8 +41,11 @@ public class OrderRepositoryIT {
     @Test
     void checkDeleteOrder() {
         var order = Order.builder()
+                .user(userRepository.getById(1))
+                .car(carRepository.getById(1))
                 .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
+                .status(OrderStatus.ACCEPTED)
                 .build();
 
         orderRepository.save(order);
@@ -57,8 +59,11 @@ public class OrderRepositoryIT {
     @Test
     void checkUpdateOrder() {
         var order = Order.builder()
+                .user(userRepository.getById(1))
+                .car(carRepository.getById(1))
                 .beginTime(LocalDateTime.of(2020, 1, 25, 12, 0))
                 .endTime(LocalDateTime.of(2020, 1, 29, 18, 0))
+                .status(OrderStatus.ACCEPTED)
                 .build();
 
         orderRepository.save(order);

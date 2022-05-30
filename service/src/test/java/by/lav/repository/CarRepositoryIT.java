@@ -4,26 +4,22 @@ import by.lav.dao.QPredicate;
 import by.lav.dto.CarFilter;
 import by.lav.entity.Car;
 import by.lav.entity.CarCategory;
-import by.lav.repository.annotation.IT;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import static by.lav.entity.QCar.car;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@IT
-@Sql({
-        "classpath:sql/data.sql"
-})
 @RequiredArgsConstructor
-public class CarRepositoryIT {
+public class CarRepositoryIT extends IntegrationTestBase {
 
     private static final int ID_FIRST = 1;
 
@@ -34,8 +30,10 @@ public class CarRepositoryIT {
     void checkSaveCar() {
         Car car = Car.builder()
                 .model("BMW")
+                .carCategory(carCategoryRepository.getById(1))
                 .colour("GREEN")
                 .seatsQuantity(5)
+                .image("IMAGE")
                 .build();
 
         carRepository.save(car);
@@ -47,8 +45,10 @@ public class CarRepositoryIT {
     void checkDeleteCar() {
         Car car = Car.builder()
                 .model("BMW")
+                .carCategory(carCategoryRepository.getById(1))
                 .colour("GREEN")
                 .seatsQuantity(5)
+                .image("IMAGE")
                 .build();
 
         carRepository.save(car);
@@ -63,8 +63,10 @@ public class CarRepositoryIT {
     void checkUpdateCar() {
         Car car = Car.builder()
                 .model("BMW")
+                .carCategory(carCategoryRepository.getById(1))
                 .colour("GREEN")
                 .seatsQuantity(5)
+                .image("IMAGE")
                 .build();
 
         carRepository.save(car);
@@ -87,11 +89,11 @@ public class CarRepositoryIT {
     @Test
     void checkFindAllCars() {
         List<Car> results = carRepository.findAll();
-        assertThat(results).hasSize(6);
+        assertThat(results).hasSize(7);
 
         List<String> cars = results.stream().map(Car::getModel).collect(toList());
         assertThat(cars).containsExactlyInAnyOrder(
-                "TOYOTA CAMRY", "MAZDA 6", "TOYOTA LANDCRUISER", "MAZDA CX-9", "TOYOTA RAV4", "MAZDA CX-5");
+                "TOYOTA CAMRY", "MAZDA 6", "TOYOTA LANDCRUISER", "MAZDA CX-9", "TOYOTA RAV4", "MAZDA CX-5", "MAZDA 6");
     }
 
     @Test
@@ -103,7 +105,12 @@ public class CarRepositoryIT {
 
     @Test
     void findCarDayPriceByCarModel() {
-        Optional<Double> carDayPrice = carRepository.findDayPriceBy("TOYOTA CAMRY");
+        Optional<CarCategory> carCategory = carRepository.findByModel("MAZDA 6");
+        Optional<CarCategory> largeSedan = carCategoryRepository.findByCategory(carCategory.orElseThrow().getCategory());
+
+        assertEquals(largeSedan.orElseThrow().getDayPrice(), 60.0);
+
+        Optional<Double> carDayPrice = carCategoryRepository.findDayPriceByCarModel("MAZDA 6");
 
         assertThat(carDayPrice).isNotNull();
         carDayPrice.ifPresent(value -> assertThat(value).isEqualTo(60.0));
@@ -120,11 +127,13 @@ public class CarRepositoryIT {
                 .add(filter.getSeatsQuantity(), car.seatsQuantity::eq)
                 .buildAnd();
 
-        List<Car> cars = (List<Car>) carRepository.findAll(predicate);
+        Iterable<Car> cars = carRepository.findAll(predicate);
 
         assertThat(cars).hasSize(2);
 
-        List<String> modelNames = cars.stream().map(Car::getModel).collect(toList());
+        List<String> modelNames = StreamSupport.stream(cars.spliterator(), false)
+                .map(Car::getModel)
+                .collect(toList());
         assertThat(modelNames).containsExactlyInAnyOrder("TOYOTA LANDCRUISER", "MAZDA CX-9");
     }
 }

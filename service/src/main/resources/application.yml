@@ -1,4 +1,11 @@
 spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+    format:
+      date: iso
+      date-time: iso
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
@@ -9,7 +16,7 @@ spring:
       show_sql: true
       format_sql: true
       hbm2ddl.auto: validate
-
+    open-in-view: false
 logging:
   level:
     root: INFO
