@@ -2,11 +2,9 @@ package by.lav.mapper;
 
 import by.lav.dto.UserCreateEditDto;
 import by.lav.entity.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
 
     @Override
@@ -19,7 +17,6 @@ public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
     public User map(UserCreateEditDto object) {
         User user = new User();
         copy(object, user);
-
         return user;
     }
 

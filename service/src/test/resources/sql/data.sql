@@ -26,7 +26,7 @@ VALUES (1, 'TOYOTA CAMRY', (SELECT id FROM car_category WHERE category = 'LARGE 
 SELECT SETVAL('car_id_seq', (SELECT MAX(id) FROM car));
 
 INSERT INTO orders (id, user_id, car_id, begin_time, end_time, status)
-VALUES (1, (SELECT id FROM users WHERE last_name = 'Ivanov'), 5,
+VALUES (1, (SELECT id FROM users WHERE last_name = 'Ivanov'), 7,
         '2020-1-25 12:0', '2020-1-29 18:0', 'ACCEPTED'),
        (2, (SELECT id FROM users WHERE last_name = 'Robson'), 4,
         '2020-2-25 12:0', '2020-2-28 12:0', 'ACCEPTED'),
@@ -37,10 +37,10 @@ VALUES (1, (SELECT id FROM users WHERE last_name = 'Ivanov'), 5,
 SELECT SETVAL('orders_id_seq', (SELECT MAX(id) FROM orders));
 
 INSERT INTO rental_time (id, car_id, begin_time, end_time, order_id)
-VALUES (1, 5, '2020-1-25 12:0', '2020-1-29 18:0',
+VALUES (1, 7, '2020-1-25 12:0', '2020-1-29 18:0',
         (SELECT id
          FROM orders
-         WHERE orders.car_id = 5
+         WHERE orders.car_id = 7
            AND orders.user_id = (SELECT id FROM users WHERE last_name = 'Ivanov'))),
        (2, 4, '2020-2-25 12:0', '2020-2-28 12:0',
         (SELECT id

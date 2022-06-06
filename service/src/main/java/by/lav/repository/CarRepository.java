@@ -12,7 +12,4 @@ import java.util.Optional;
 public interface CarRepository extends JpaRepository<Car, Integer>, QuerydslPredicateExecutor<Car> {
 
     List<Car> findByCarCategory(CarCategory carCategory);
-
-    @Query("select c.carCategory from Car c where c.model = :model")
-    Optional<CarCategory> findByModel(String model);
 }

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RequiredArgsConstructor
-public class UserServiceIT extends IntegrationTestBase {
+class UserServiceIT extends IntegrationTestBase {
 
     private static final Integer USER_1 = 1;
 

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RequiredArgsConstructor
-public class CarRepositoryIT extends IntegrationTestBase {
+class CarRepositoryIT extends IntegrationTestBase {
 
     private static final int ID_FIRST = 1;
 
@@ -105,7 +105,7 @@ public class CarRepositoryIT extends IntegrationTestBase {
 
     @Test
     void findCarDayPriceByCarModel() {
-        Optional<CarCategory> carCategory = carRepository.findByModel("MAZDA 6");
+        Optional<CarCategory> carCategory = carCategoryRepository.findByModel("MAZDA 6");
         Optional<CarCategory> largeSedan = carCategoryRepository.findByCategory(carCategory.orElseThrow().getCategory());
 
         assertEquals(largeSedan.orElseThrow().getDayPrice(), 60.0);

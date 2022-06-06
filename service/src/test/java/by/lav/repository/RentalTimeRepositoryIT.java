@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RequiredArgsConstructor
-public class RentalTimeRepositoryIT extends IntegrationTestBase {
+class RentalTimeRepositoryIT extends IntegrationTestBase {
 
     private static final int ID_FIRST = 1;
 

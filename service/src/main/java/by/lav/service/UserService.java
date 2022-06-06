@@ -1,6 +1,7 @@
 package by.lav.service;
 
 import by.lav.dto.UserCreateEditDto;
+import by.lav.dto.UserFilter;
 import by.lav.dto.UserReadDto;
 import by.lav.mapper.UserCreateEditMapper;
 import by.lav.mapper.UserReadMapper;
