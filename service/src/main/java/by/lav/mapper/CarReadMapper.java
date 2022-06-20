@@ -20,7 +20,6 @@ public class CarReadMapper implements Mapper<Car, CarReadDto> {
                 .map(carCategoryReadMapper::map)
                 .orElse(null);
 
-
         return new CarReadDto(
                 object.getId(),
                 object.getModel(),

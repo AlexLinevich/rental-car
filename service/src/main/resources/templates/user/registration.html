@@ -15,8 +15,8 @@
     <label for="lastName">Lastname:
         <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
     </label><br>
-    <label for="password">Password:
-        <input id="password" type="text" name="password" th:value="*{password}">
+    <label for="rawPassword">Password:
+        <input id="rawPassword" type="password" name="rawPassword">
     </label><br>
     <div th:each="role : ${roles}">
         <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">

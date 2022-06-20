@@ -2,18 +2,26 @@ spring:
   mvc:
     format:
       date: iso
-      date-time: iso
+      date-time: yyyy-MM-dd HH:mm
+      time: iso
+
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+
+  messages:
+    basename: messages
+
   jpa:
     properties.hibernate:
       show_sql: true
       format_sql: true
       hbm2ddl.auto: validate
     open-in-view: false
-logging:
-  level:
-    root: INFO
+
+  logging:
+    level:
+      root: INFO
+

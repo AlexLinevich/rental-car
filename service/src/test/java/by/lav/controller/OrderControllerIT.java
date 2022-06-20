@@ -31,8 +31,7 @@ class OrderControllerIT extends IntegrationTestBase {
         mockMvc.perform(get("/orders"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(view().name("order/orders"))
-                .andExpect(model().attributeExists("orders"))
-                .andExpect(model().attribute("orders", hasSize(4)));
+                .andExpect(model().attributeExists("orders"));
     }
 
     @Test
@@ -40,8 +39,8 @@ class OrderControllerIT extends IntegrationTestBase {
         mockMvc.perform(post("/orders")
                 .param(userId, "1")
                 .param(carId, "1")
-                .param(beginTime, "2020-1-25 12:0")
-                .param(endTime, "2020-1-29 18:0")
+                .param(beginTime, "2020-01-25 12:00")
+                .param(endTime, "2020-01-29 18:00")
                 .param(status, "ACCEPTED")
                 .param(message, "MESSAGE")
         )

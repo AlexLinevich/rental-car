@@ -5,6 +5,7 @@
     <title>User</title>
 </head>
 <body>
+<div th:insert="~{fragment :: header}"></div>
 <form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}">
     <label for="email">Username/Email:
         <input id="email" type="text" name="email" th:value="*{email}">
@@ -15,9 +16,9 @@
     <label for="lastName">Lastname:
         <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
     </label><br>
-    <label for="password">Password:
-        <input id="password" type="text" name="password" th:value="*{password}">
-    </label><br>
+<!--    <label for="password">Password:-->
+<!--        <input id="password" type="text" name="password" th:value="*{password}">-->
+<!--    </label><br>-->
     <div th:each="role : ${roles}">
         <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
         <label th:for="${role}" th:text="${role}">Role name</label>

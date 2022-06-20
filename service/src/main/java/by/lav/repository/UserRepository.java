@@ -6,7 +6,9 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, Integer>, QuerydslPredicateExecutor<User> {
+public interface  UserRepository extends JpaRepository<User, Integer>, QuerydslPredicateExecutor<User> {
 
     Optional<User> findByEmailAndPassword(String email, String password);
+
+    Optional<User> findByEmail(String email);
 }

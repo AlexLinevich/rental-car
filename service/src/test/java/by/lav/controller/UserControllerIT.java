@@ -9,9 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static by.lav.dto.UserCreateEditDto.Fields.email;
 import static by.lav.dto.UserCreateEditDto.Fields.firstName;
 import static by.lav.dto.UserCreateEditDto.Fields.lastName;
-import static by.lav.dto.UserCreateEditDto.Fields.password;
 import static by.lav.dto.UserCreateEditDto.Fields.role;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -30,8 +28,7 @@ class UserControllerIT extends IntegrationTestBase {
         mockMvc.perform(get("/users"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(view().name("user/users"))
-                .andExpect(model().attributeExists("users"))
-                .andExpect(model().attribute("users", hasSize(3)));
+                .andExpect(model().attributeExists("users"));
     }
 
     @Test
@@ -40,7 +37,6 @@ class UserControllerIT extends IntegrationTestBase {
                 .param(firstName, "Test")
                 .param(lastName, "Test")
                 .param(email, "test@gmail.com")
-                .param(password,"123")
                 .param(role, "ADMIN")
         )
                 .andExpectAll(

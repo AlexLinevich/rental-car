@@ -2,10 +2,18 @@ package by.lav.mapper;
 
 import by.lav.dto.UserCreateEditDto;
 import by.lav.entity.User;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User map(UserCreateEditDto fromObject, User toObject) {
@@ -24,7 +32,11 @@ public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
         user.setFirstName(object.getFirstName());
         user.setLastName(object.getLastName());
         user.setEmail(object.getEmail());
-        user.setPassword(object.getPassword());
         user.setRole(object.getRole());
+
+        Optional.ofNullable(object.getRawPassword())
+                .filter(StringUtils::hasText)
+                .map(passwordEncoder::encode)
+                .ifPresent(user::setPassword);
     }
 }

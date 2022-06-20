@@ -4,6 +4,8 @@ import by.lav.entity.Role;
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;
 
+import javax.validation.constraints.NotBlank;
+
 @Value
 @FieldNameConstants
 public class UserCreateEditDto {
@@ -11,6 +13,7 @@ public class UserCreateEditDto {
     String firstName;
     String lastName;
     String email;
-    String password;
+    @NotBlank
+    String rawPassword;
     Role role;
 }
