@@ -11,9 +11,6 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
 
-  messages:
-    basename: messages
-
   jpa:
     properties.hibernate:
       show_sql: true
@@ -21,7 +18,4 @@ spring:
       hbm2ddl.auto: validate
     open-in-view: false
 
-  logging:
-    level:
-      root: INFO
 

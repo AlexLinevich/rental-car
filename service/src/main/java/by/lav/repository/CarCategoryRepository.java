@@ -12,9 +12,9 @@ public interface CarCategoryRepository extends JpaRepository<CarCategory, Intege
 
     Optional<CarCategory> findByCategory(String category);
 
-    @Query("select max (cc.dayPrice) from CarCategory cc join cc.cars c where c.model = :model")
+    @Query("select max(cc.dayPrice) from CarCategory cc join cc.cars c where c.model = :model")
     Optional<Double> findDayPriceByCarModel(String model);
 
-    @Query("select max (c.carCategory) from Car c where c.model = :model")
+    @Query("select max(c.carCategory) from Car c where c.model = :model")
     Optional<CarCategory> findByModel(String model);
 }

@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static by.lav.dto.UserCreateEditDto.Fields.email;
 import static by.lav.dto.UserCreateEditDto.Fields.firstName;
 import static by.lav.dto.UserCreateEditDto.Fields.lastName;
+import static by.lav.dto.UserCreateEditDto.Fields.rawPassword;
 import static by.lav.dto.UserCreateEditDto.Fields.role;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,11 +38,12 @@ class UserControllerIT extends IntegrationTestBase {
                 .param(firstName, "Test")
                 .param(lastName, "Test")
                 .param(email, "test@gmail.com")
+                .param(rawPassword, "123")
                 .param(role, "ADMIN")
         )
                 .andExpectAll(
                         status().is3xxRedirection(),
-                        redirectedUrlPattern("/users/{\\d+}")
+                        redirectedUrlPattern("/login*")
                 );
     }
 }

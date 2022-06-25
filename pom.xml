@@ -31,8 +31,6 @@
         <javax.persistence-api>2.2</javax.persistence-api>
         <tescontainers.version>1.16.3</tescontainers.version>
         <springdoc>1.6.8</springdoc>
-        <security-test>5.6.5</security-test>
-        <springsecurity5>3.0.3.RELEASE</springsecurity5>
     </properties>
 
     <build>
