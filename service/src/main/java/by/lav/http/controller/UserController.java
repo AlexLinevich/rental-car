@@ -1,7 +1,9 @@
 package by.lav.http.controller;
 
 import by.lav.dto.UserCreateEditDto;
+import by.lav.dto.UserReadDto;
 import by.lav.entity.Role;
+import by.lav.service.ClientDataService;
 import by.lav.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/users")
@@ -20,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserController {
 
     private final UserService userService;
+    private final ClientDataService clientDataService;
 
     @GetMapping
     public String findAll(Model model) {
@@ -46,9 +50,19 @@ public class UserController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute UserCreateEditDto user) {
-        userService.create(user);
-        return "redirect:/login";
+    public String create(Model model, @ModelAttribute("user") UserCreateEditDto user, RedirectAttributes redirectAttributes) {
+        UserReadDto userReadDto = userService.create(user);
+
+        if (user.getRole().equals(Role.CLIENT)) {
+            if (clientDataService.findByUserId((userReadDto.getId())).isPresent()) {
+                return "redirect:/login";
+            } else {
+                redirectAttributes.addFlashAttribute("createdUser", userReadDto);
+                return "redirect:/client-data";
+            }
+        } else {
+            return "redirect:/login";
+        }
     }
 
     @PostMapping("/{id}/update")

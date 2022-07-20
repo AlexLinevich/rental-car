@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+</head>
+<body>
+<div th:insert="~{fragment :: header}"></div>
+<h2>LIST OF AVAILABLE CARS</h2>
+<form action="/cars/main">
+    <label for="colour">Colour
+        <input id="colour" type="text" name="colour" th:value="${filter.colour}">
+    </label>
+    <label for="seatsQuantity">Seats Quantity
+        <input id="seatsQuantity" type="number" name="seatsQuantity" th:value="${filter.seatsQuantity}">
+    </label>
+    <div>
+        <label for="page">Page:
+            <input id="page" type="number" name="page" th:value="${cars.metadata.page}">
+        </label>
+        <label for="size">Size:
+            <input id="size" type="number" name="size" th:value="${cars.metadata.size}">
+        </label>
+    </div>
+    <button type="submit">Filter</button>
+</form>
+<div th:each="car : ${cars.getContent()}">
+    <li>
+        <img width="150" height="100" th:src="@{/api/v1/cars/{carId}/carImage(carId=${car.id})}"
+             alt="No image"><br>
+        <a th:text="|${car.model}. ${car.colour}. ${car.seatsQuantity} seats. ${car.getCarCategory().getDayPrice()} dollars per day|">Car</a>
+    </li>
+</div>
+<form th:action="@{/cars}" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <button type="submit">Edit car</button>
+</form>
+<form th:action="@{/car-categories}" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <button type="submit">Edit car category</button>
+</form>
+<form th:action="@{/users}" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <button type="submit">Edit user</button>
+</form>
+<form th:action="@{/orders}" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <button type="submit">See orders</button>
+</form>
+<form th:action="@{/orders/client-orders}" th:if="${#authorization.expression('hasAuthority(''CLIENT'')')}">
+    <button type="submit">Your orders</button>
+</form>
+</body>
+</html>

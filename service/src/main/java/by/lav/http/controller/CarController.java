@@ -1,8 +1,14 @@
 package by.lav.http.controller;
 
 import by.lav.dto.CarCreateEditDto;
+import by.lav.dto.CarFilter;
+import by.lav.dto.CarReadDto;
+import by.lav.dto.PageResponse;
+import by.lav.service.CarCategoryService;
 import by.lav.service.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class CarController {
 
     private final CarService carService;
+    private final CarCategoryService carCategoryService;
 
     @GetMapping
     public String findAll(Model model) {
@@ -26,17 +33,34 @@ public class CarController {
         return "car/cars";
     }
 
+    @GetMapping("/main")
+    public String startFindAll(Model model, CarFilter carFilter, Pageable pageable) {
+        Page<CarReadDto> page = carService.findAll(carFilter, pageable);
+        model.addAttribute("cars", PageResponse.of(page));
+        model.addAttribute("filter", carFilter);
+        return "car/main";
+    }
+
+    @GetMapping("/car-add")
+    public String carAdd(Model model, @ModelAttribute("car") CarCreateEditDto car) {
+        model.addAttribute("car", car);
+        model.addAttribute("carCategories", carCategoryService.findAll());
+        ;
+        return "car/car-add";
+    }
+
     @GetMapping("/{id}")
     public String findById(@PathVariable("id") Integer id, Model model) {
         return carService.findById(id)
                 .map(car -> {
                     model.addAttribute("car", car);
+                    model.addAttribute("carCategories", carCategoryService.findAll());
                     return "car/car";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping
+    @PostMapping("/car-add")
     public String create(@ModelAttribute CarCreateEditDto car) {
         return "redirect:/cars/" + carService.create(car).getId();
     }

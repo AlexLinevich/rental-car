@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Make order</title>
+</head>
+<body>
+<div th:insert="~{fragment :: header}"></div>
+<h2>MAKE ORDER</h2>
+<form th:action="@{/orders/make}" method="post" th:object="${order}">
+    <label for="userId">
+        <input id="userId" type="hidden" name="userId" th:value="${currentUser.getId()}">
+    </label><br>
+    <label for="car">Car:
+    <select id="car" name="carId">
+        <option th:each="car : ${cars}"
+                th:value="${car.getId()}"
+                th:selected="${car.getId() == order.getCarId()}"
+                th:text="|${car.getModel()}. ${car.getColour}. ${car.getSeatsQuantity} seats.
+                 ${car.getCarCategory().getDayPrice()} dollars per day|">Car
+        </option>
+    </select>
+</label><br>
+    <label for="beginTimeId">Begin time:
+        <input type="datetime-local" name="beginTime" id="beginTimeId" th:value="*{beginTime}">
+    </label><br>
+    <label for="endTimeId">End time:
+        <input type="datetime-local" name="endTime" id="endTimeId" th:value="*{endTime}">
+    </label><br>
+    <label for="statusId">
+        <input id="statusId" type="hidden" name="status" th:value="${orderStatus}">
+    </label><br>
+    <label for="messageId">
+        <input id="messageId" type="hidden" name="message" th:value="' '">
+    </label><br>
+    <button type="submit">Save</button>
+</form>
+<form th:action="@{/orders/client-orders}">
+    <button type="submit">Back to my orders</button>
+</form>
+</body>
+</html>

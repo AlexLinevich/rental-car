@@ -1,20 +1,16 @@
 package by.lav.dto;
 
-import by.lav.entity.OrderStatus;
-import lombok.Data;
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.LocalDateTime;
 
-@Data
+@Value
 @FieldNameConstants
-public class OrderCreateEditDto {
+public class RentalTimeCreateEditDto {
 
-    Integer userId;
     Integer carId;
     LocalDateTime beginTime;
     LocalDateTime endTime;
-    OrderStatus status;
-    String message;
+    Integer orderId;
 }

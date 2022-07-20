@@ -6,7 +6,9 @@
 </head>
 <body>
 <div th:fragment="header">
-    <span th:text="${#authentication.principal.username}">Username</span>
+    <span th:text="|CURRENT USER: ${#authentication.principal.username}|">Username</span>
+    <span th:text="admin" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">UserRole</span>
+    <span th:text="client" th:if="${#authorization.expression('hasAuthority(''CLIENT'')')}">UserRole</span>
     <form th:action="@{/logout}" method="post">
         <button type="submit">Logout</button>
     </form>
@@ -22,6 +24,5 @@
         </select>
     </form>
 </div>
-
 </body>
 </html>

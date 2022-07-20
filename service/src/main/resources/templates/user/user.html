@@ -6,6 +6,7 @@
 </head>
 <body>
 <div th:insert="~{fragment :: header}"></div>
+<h2>EDIT USER</h2>
 <form th:action="@{/users/{userId}/update(userId=${user.id})}" method="post" th:object="${user}">
     <label for="email">Username/Email:
         <input id="email" type="text" name="email" th:value="*{email}">
@@ -16,17 +17,17 @@
     <label for="lastName">Lastname:
         <input id="lastName" type="text" name="lastName" th:value="*{lastName}">
     </label><br>
-<!--    <label for="password">Password:-->
-<!--        <input id="password" type="text" name="password" th:value="*{password}">-->
-<!--    </label><br>-->
     <div th:each="role : ${roles}">
         <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
         <label th:for="${role}" th:text="${role}">Role name</label>
     </div>
     <button type="submit">Update</button>
 </form>
-<form th:action="@{/users/{userId}/delete(userId=${user.id})}" th:if="${user.role.name() == 'ADMIN'}" method="post">
+<form th:action="@{/users/{userId}/delete(userId=${user.id})}" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}" method="post">
     <button type="submit">Remove</button>
+</form>
+<form th:action="@{/users}">
+    <button type="submit">Back to users</button>
 </form>
 </body>
 </html>

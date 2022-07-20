@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Client orders</title>
+</head>
+<body>
+<div th:insert="~{fragment :: header}"></div>
+<h2>LIST OF ORDERS</h2>
+<div th:each="order : ${orders}">
+    <a th:href="@{'/orders/' + ${order.id}}"
+       th:text="|Order from ${order.getBeginTime()} to ${order.getEndTime()}
+        Status: ${order.getOrderStatus()} Message: ${order.getMessage()}|">Order</a>
+</div>
+<form th:action="@{/cars/main}">
+    <button type="submit">Back to main page</button>
+</form>
+</body>
+</html>

@@ -6,7 +6,11 @@ spring:
   jpa:
     properties.hibernate:
       hbm2ddl.auto: validate
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm
 
 logging:
   level:
     root: INFO
+

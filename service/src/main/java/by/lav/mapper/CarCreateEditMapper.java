@@ -6,8 +6,11 @@ import by.lav.entity.CarCategory;
 import by.lav.repository.CarCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+
+import static java.util.function.Predicate.not;
 
 @Component
 @RequiredArgsConstructor
@@ -32,8 +35,11 @@ public class CarCreateEditMapper implements Mapper<CarCreateEditDto, Car> {
         car.setModel(object.getModel());
         car.setColour(object.getColour());
         car.setSeatsQuantity(object.getSeatsQuantity());
-        car.setImage(object.getImage());
         car.setCarCategory(getCarCategory(object.getCarCategoryId()));
+
+        Optional.ofNullable(object.getImage())
+                .filter(not(MultipartFile::isEmpty))
+                .ifPresent(image -> car.setImage(image.getOriginalFilename()));
     }
 
     public CarCategory getCarCategory(Integer carCategoryId) {

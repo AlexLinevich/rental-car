@@ -39,8 +39,8 @@ public class RentalTime {
         this.car.getRentalTimes().add(this);
     }
 
-    public void setOrder(Car car) {
-        this.car = car;
-        this.car.getRentalTimes().add(this);
+    public void setOrder(Order order) {
+        this.order = order;
+        this.order.getRentalTimes().add(this);
     }
 }

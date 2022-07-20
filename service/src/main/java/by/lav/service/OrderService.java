@@ -20,6 +20,7 @@ import static java.util.stream.Collectors.toList;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final CheckOrderService checkOrderService;
     private final OrderReadMapper orderReadMapper;
     private final OrderCreateEditMapper orderCreateEditMapper;
 
@@ -47,6 +48,14 @@ public class OrderService {
     public Optional<OrderReadDto> update(Integer id, OrderCreateEditDto orderDto) {
         return orderRepository.findById(id)
                 .map(entity -> orderCreateEditMapper.map(orderDto, entity))
+                .map(orderRepository::saveAndFlush)
+                .map(orderReadMapper::map);
+    }
+
+    @Transactional
+    public Optional<OrderReadDto> checkAndUpdate(Integer id, OrderCreateEditDto orderDto) {
+        return orderRepository.findById(id)
+                .map(entity -> orderCreateEditMapper.map(checkOrderService.check(id, orderDto), entity))
                 .map(orderRepository::saveAndFlush)
                 .map(orderReadMapper::map);
     }

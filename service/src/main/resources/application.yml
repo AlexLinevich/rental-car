@@ -1,8 +1,8 @@
 spring:
   mvc:
     format:
-      date: iso
-      date-time: yyyy-MM-dd HH:mm
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd'T'HH:mm
       time: iso
 
   datasource:
@@ -18,4 +18,6 @@ spring:
       hbm2ddl.auto: validate
     open-in-view: false
 
-
+app:
+  image:
+    bucket: 'D:\SASHA\DMDEV\Ment_DMDEV_2\rental-car\images'

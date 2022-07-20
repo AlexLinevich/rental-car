@@ -6,8 +6,12 @@
 </head>
 <body>
 <div th:insert="~{fragment :: header}"></div>
+<h2>LIST OF USERS</h2>
 <div th:each="user : ${users}">
     <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.email}|">User</a>
 </div>
+<form th:action="@{/cars/main}">
+    <button type="submit">Back to main page</button>
+</form>
 </body>
 </html>

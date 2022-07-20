@@ -23,7 +23,13 @@ public class CarCategoryController {
     @GetMapping
     public String findAll(Model model) {
         model.addAttribute("carCategories", carCategoryService.findAll());
-        return "car-category/car-categories";
+        return "car/car-categories";
+    }
+
+    @GetMapping("/car-category-add")
+    public String addCarCategory(Model model, @ModelAttribute CarCategoryCreateEditDto carCategory) {
+        model.addAttribute("carCategory", carCategory);
+        return "car/car-category-add";
     }
 
     @GetMapping("/{id}")
@@ -31,12 +37,12 @@ public class CarCategoryController {
         return carCategoryService.findById(id)
                 .map(carCategory -> {
                     model.addAttribute("carCategory", carCategory);
-                    return "car-category/car-category";
+                    return "car/car-category";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping
+    @PostMapping("/car-category-add")
     public String create(@ModelAttribute CarCategoryCreateEditDto carCategory) {
         return "redirect:/car-categories/" + carCategoryService.create(carCategory).getId();
     }

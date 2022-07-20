@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+</head>
+<body>
+<div th:insert="~{fragment :: header}"></div>
+<h2>ORDER</h2>
+<form th:action="@{/orders/{orderId}/check(orderId=${order.id})}" method="post" th:object="${order}">
+    <label for="userId">User id:
+        <input id="userId" type="number" name="userId" th:value="*{user.id}">
+    </label><br>
+    <label for="carId">Car id:
+        <input id="carId" type="number" name="carId" th:value="*{car.id}">
+    </label><br>
+    <label for="beginTimeId">Begin time:
+        <input type="datetime-local" name="beginTime" id="beginTimeId" th:value="*{beginTime}">
+    </label><br>
+    <label for="endTimeId">End time:
+        <input type="datetime-local" name="endTime" id="endTimeId" th:value="*{endTime}">
+    </label><br>
+    <label for="statusId">Status:
+        <input id="statusId" type="text" name="status" th:value="*{orderStatus}">
+    </label><br>
+    <label for="messageId">Message:
+        <input id="messageId" type="text" name="message" th:value="*{message}">
+    </label><br>
+    <button type="submit">Check order</button>
+</form><br>
+<form th:action="@{/orders}">
+    <button type="submit">Back to orders</button>
+</form>
+</body>
+</html>

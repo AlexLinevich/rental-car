@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Car-add</title>
+</head>
+<body>
+<div th:insert="~{fragment :: header}"></div>
+<h2>ADD CAR</h2>
+<form th:action="@{/cars/car-add}" enctype="multipart/form-data" method="post" th:object="${car}">
+    <label for="modelId">Model:
+        <input type="text" name="model" id="modelId" th:value="*{model}">
+    </label><br>
+    <label for="colourId">Colour:
+        <input type="text" name="colour" id="colourId" th:value="*{colour}">
+    </label><br>
+    <label for="seatsQuantityId">Seats quantity:
+        <input type="number" name="seatsQuantity" id="seatsQuantityId" th:value="*{seatsQuantity}">
+    </label><br>
+    <label for="imageId">Image:
+        <input type="file" name="image" id="imageId">
+    </label><br>
+    <label for="carCategory">Car Category:
+        <select id="carCategory" name="carCategoryId">
+            <option th:each="carCategory : ${carCategories}"
+                    th:value="${carCategory.getId()}"
+                    th:selected="${carCategory.getId() == car.carCategoryId}"
+                    th:text="${carCategory.getCategory()}">CarCategory</option>
+        </select>
+    </label><br>
+    <button type="submit">Save</button>
+</form>
+<form th:action="@{/cars}">
+    <button type="submit">Back to cars</button>
+</form>
+</body>
+</html>

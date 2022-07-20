@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Car categories</title>
+</head>
+<body>
+<div th:insert="~{fragment :: header}"></div>
+<h2>LIST OF CAR CATEGORIES</h2>
+<div th:each="carCategory : ${carCategories}">
+    <a th:href="@{'/car-categories/' + ${carCategory.id}}"
+       th:text="|${carCategory.id}. ${carCategory.category}|">Car category
+    </a>
+</div>
+<form th:action="@{/car-categories/car-category-add}" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <button type="submit">Add car category</button>
+</form>
+<form th:action="@{/cars/main}">
+    <button type="submit">Back to main page</button>
+</form>
+</body>
+</html>

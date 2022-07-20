@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+<h2>ADD CLIENT DATA</h2>
+<form th:action="@{/client-data}" method="post">
+    <label for="userId">
+        <input id="userId" type="hidden" name="userId" th:value="${createdUser.getId()}">
+    </label><br>
+    <label for="driverLicenceNo">Driver licence number:
+        <input id="driverLicenceNo" type="text" name="driverLicenceNo">
+    </label><br>
+    <label for="dlExpirationDay">Driver licence expiration day:
+        <input id="dlExpirationDay" type="date" name="dlExpirationDay">
+    </label><br>
+    <label for="creditAmount">Credit amount:
+        <input id="creditAmount" type="number" name="creditAmount">
+    </label><br>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>

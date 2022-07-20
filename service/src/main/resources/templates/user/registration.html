@@ -5,6 +5,7 @@
     <title>Registration</title>
 </head>
 <body>
+<h2>REGISTRATION FORM</h2>
 <form th:action="@{/users}" method="post" th:object="${user}">
     <label for="email">Username/Email:
         <input id="email" type="text" name="email" th:value="*{email}">
